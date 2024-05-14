@@ -25,4 +25,8 @@ Le développement du projet sera divisé en plusieurs phases:
 - Phase 2 : Conception de l'interface et de l'expérience utilisateur – Création des wireframes et des prototypes initiaux pour validation. 
 - Phase 3 : Développement – Codage des fonctionnalités en utilisant Flutter pour le frontend et choix d'une solution appropriée pour le backend (par exemple Firebase). 
 - Phase 4 : Tests et déploiement – Tests d'intégration et d'utilisation, correction des bugs, et 
-déploiement de l'application sur les plateformes correspondantes. 
+déploiement de l'application sur les plateformes correspondantes.
+
+## Liens importants
+
+- écheancier : https://sharing.clickup.com/9014347195/g/h/8cmr1dv-414/c800a58015441a2
