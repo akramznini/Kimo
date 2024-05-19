@@ -152,11 +152,18 @@
 ### Réalisations
 
 <!-- Description des tâches accomplies -->
+- Petite etude de marche
+- exigences du projet
+- echeancier Gantt
 
 ### Observations
 
 <!-- Description des observations importantes (ex: remarque ou trouvaille intéressante, difficultés rencontrées) de la semaine -->
+- En raison du manque de données disponibles, il est souvent nécessaire de mener ses propres enquêtes pour obtenir des informations pertinentes sur les préférences et les sentiments des clients au Maroc.
 
 ### Ressources
+- Peer-to-Peer Rental Markets in the Sharing Economy ∗ By SAMUEL FRAIBERGER AND ARUN SUNDARARAJAN https://www.hbs.edu/faculty/Shared%20Documents/conferences/2016-dids/Fraigerber_Sundararajan_March2016.pdf
+- Ministere du tourisme du Royaume du Maroc https://mtaess.gov.ma/fr/tourisme/chiffres-cles/
+- Centre Regional d'investissement Fes et Meknes: https://fesmeknesinvest.ma/wp-content/uploads/2021/09/rapport-K711.pdf
 
 <!-- Matériels consultés (vidéo, article, documentation, livres)-->
