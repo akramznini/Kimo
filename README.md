@@ -1,8 +1,10 @@
 # Projet IFT3150: Kimo – Application de location de voitures entre particuliers 
 
+> **Page web du projet (IFT3150)**: https://akramznini.github.io/Kimo/
+
 ## Description du projet 
 
-Le projet Kimo vise à développer une application de location de voitures entre particuliers, permettant aux propriétaires de voitures de les louer à d’autres utilisateurs. Cette application sera disponible sur les plateformes Android et iOS et sera développée en utilisant le framework Flutter. Le projet couvrira l'ensemble de l'architecture de l'application, du backend au frontend, afin de produire un prototype fonctionnel. 
+Le projet Kimo vise à développer une application de location de voitures entre particuliers, permettant aux propriétaires de voitures de les louer à d’autres utilisateurs. Cette application sera disponible sur les plateformes Android et iOS et sera développée en utilisant le framework Flutter. Le projet couvrira l'ensemble de l'architecture, de l'application, du backend au frontend, afin de produire un prototype fonctionnel. 
 
  
 ## Objectifs 
@@ -29,4 +31,4 @@ déploiement de l'application sur les plateformes correspondantes.
 
 ## Liens importants
 
-- écheancier : https://sharing.clickup.com/9014347195/g/h/8cmr1dv-414/c800a58015441a2
+- Écheancier : https://sharing.clickup.com/9014347195/g/h/8cmr1dv-414/c800a58015441a2
