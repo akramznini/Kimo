@@ -1,20 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>KIMO – A peer-to-peer car sharing solution</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport | Kimo</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Intro</h1>
+    <header class="page-header">
+        <!-- <img class="logo" style="display: block" src="" height="120" alt="" /> -->
+    
+        <h1 class="page-title">
+            Kimo <br>
+            <span style="font-size: 0.6em; font-weight: 500;">IFT3150 &ndash; Rapport</span>
+        </h1>
+        
+        
+        <ul class="bare-list project-infos">
+            <!-- <li class="info ico ico-supervisor">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M404.7 79.78h-2.8c-7.5.26-15.8 1.73-24.8 4.3-18 5.16-38.4 14.56-59.3 25.78-41.9 22.4-85.8 52-121.5 68.6-26.4 12.4-59.3 20.4-89.8 27.5-30.5 7.1-58.95 13.4-74.36 20.6-7.13 3.4-10.9 6.9-12.71 9.9-1.8 2.9-2.1 5.2-1.44 8.4 1.32 6.4 8.57 15.4 18.49 21.9l3.29 2.1c162.63-2.3 289.43-13.7 387.73-52.6 2.1-17.6 6.7-34.7 16.5-48.5v-.1l.1-.1c24.5-32.2 8.9-72.58-22.4-84.89-5-1.95-10.7-2.91-17-2.93zm21.9 185.12c-44.2 25.1-103.8 37-169.2 41.2-68.7 4.4-143.7.1-213.52-7.8l1.89 14c31.19 3.2 98.53 11.8 172.83 11.5 77.2-.3 159.6-11.3 208.6-46.2-.2-4.1-.4-8.3-.6-12.7zm7.1 30.2c-46.9 31.5-113.8 42.9-179.9 45.8 44.7 39 89.3 55.1 127.3 59.1 45.2 4.8 81.5-8.7 94.8-19.8 13-10.8 17.5-19.5 18.3-26.2.7-6.8-2-13.3-8.2-20.5-11.3-13.4-33.5-26.4-52.3-38.4z"></path></svg>
+            </li> -->
+            <li class="info supervisor" title="Superviseur: Louis-Edouard LAFONTANT">
+                <svg class="ico" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M480 288c0-80.25-49.28-148.92-119.19-177.62L320 192V80a16 16 0 0 0-16-16h-96a16 16 0 0 0-16 16v112l-40.81-81.62C81.28 139.08 32 207.75 32 288v64h448zm16 96H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h480a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"></path></svg>
+                <span class="content">Louis-Edouard LAFONTANT</span>
+            </li>
+            <li class="info team" title="Étudiant: Akram ZNINI">
+                <svg class="ico" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3zM609.3 512H471.4c5.4-9.4 8.6-20.3 8.6-32v-8c0-60.7-27.1-115.2-69.8-151.8c2.4-.1 4.7-.2 7.1-.2h61.4C567.8 320 640 392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 0 112 50.1 112 112s-50.1 112-112 112z"></path></svg>
+                <span class="content">Akram ZNINI</span>
+            </li>
+        </ul>
+
+    </header>
+
+    <main class="page-body">
+    <section class="content-wrapper">
+    <h2>Intro</h2>
     <p>In an era where convenience and sustainability are paramount, the concept of carsharing has emerged as a transformative solution to urban mobility challenges. Kimo is a peer-to-peer carsharing platform designed to revolutionize the way individuals access transportation. By connecting vehicle owners with individuals in need of short-term transportation, Kimo offers a convenient, cost-effective, and sustainable alternative to traditional car ownership and rental services.</p>
 
     <h2>A case for the sharing Economy</h2>
     <p>The sharing economy is a system where individuals share resources, goods, and services, often facilitated by online platforms. This model allows for the efficient use of assets like cars and accommodation. Examples include companies like Airbnb for accommodation sharing and Uber for ride-sharing. The sharing economy promotes resource efficiency, cost savings, and community interaction.</p>
     
     <p>The sharing economy addresses the issue of underutilization of certain products. For instance, cars typically remain unused for the majority of the time, as illustrated by the Distribution of Vehicle Usage graph.</p>
-    <img src="./images/vehicule-usage-distribition.png" style="width: 400px;"/>
+    <img src="./images/vehicule-usage-distribition.png" class="centered-image"/>
     <p>One of the primary challenges people encounter when attempting to rent a vehicle is the availability of cars. Data from the carsharing company Getaround indicates that the sharing or peer-to-peer model offers significantly high availability rates, as depicted in the graph below.</p>
 
-    <img src="./images/vehicule-availability-ditribution.png" style="width: 400px;"/>
+    <img src="./images/vehicule-availability-ditribution.png" class="centered-image"/>
     <h2>Already Existing Services</h2>
     <p>There already exists a number of services that offer carsharing services. Most notably:</p>
     <ul>
@@ -24,29 +56,30 @@
     </ul>
 
     <h2>Why build another peer-to-peer car sharing app?</h2>
-    <p>The motivation behind developing a carsharing app stems from the specific market I intend to target, namely my home country of Morocco. Put simply, there is currently no peer-to-peer carsharing service available in Morocco, and I believe that people would greatly benefit from it for several reasons. Morocco is a popular tourist destination, attracting over 14.5 million visitors in 2023. A significant portion of these visitors opt to rent cars, leading to frequent shortages in rental cars. Additionally, the current car rental market in Morocco is valued at 5.84 billion Dirhams per year, indicating a substantial demand for car rental services. This gap in the market presents a unique opportunity to introduce a peer-to-peer carsharing service, especially considering the rising popularity of the sharing economy globally.</p>
+    <p>The motivation behind developing a carsharing app stems from the specific market I intend to target, namely my home country of Morocco. Put simply, there is currently no peer-to-peer carsharing service available in Morocco, and I believe that people would greatly benefit from it for several reasons. Morocco is a popular tourist destination, attracting over 14.5 million visitors in 2023. A significant portion of these visitors opt to rent cars, leading to frequent shortages in rental cars. Additionally, the current car rental market in Morocco generated 5.84 billion Dirhams in 2023, indicating a substantial demand for car rental services. This gap in the market presents a unique opportunity to introduce a peer-to-peer carsharing service, especially considering the rising popularity of the sharing economy globally.</p>
 
     <h2>Requirements</h2>
     <p>Now that we have a solid economic incentive to build the app, let’s take a look at the requirements for building such an app.</p>
 
     <h3>Functional Specifications:</h3>
     <ul>
-        <li>Search Functionality: Enable users to search for vehicles based on type, location, availability, ratings, and reviews.</li>
-        <li>Booking System: Allow guests to book vehicles directly on the platform.</li>
-        <li>Messaging: Provide a messaging system for users to communicate with hosts.</li>
-        <li>Check-in and Check-out: Offer features for users to check in and out of their trips.</li>
-        <li>Rating System: Include a rating system for users to rate their experience with the vehicle and host.</li>
-        <li>Payment System: Implement a payment system for users to securely pay for their bookings.</li>
-        <li>ID Verification System: Verify the identity of users and hosts through an ID verification system.</li>
-        <li>Photo and Video Recording: Take photos before and after using a car to check for damage.</li>
+        <li><b>Search Functionality: </b>Enable users to search for vehicles based on type, location, availability, ratings, and reviews.</li>
+        <li><b>Booking System: </b>Allow guests to book vehicles directly on the platform.</li>
+        <li><b>Messaging: </b>Provide a messaging system for users to communicate with hosts.</li>
+        <li><b>Check-in and Check-out: </b>Offer features for users to check in and out of their trips.</li>
+        <li><b>Rating System: </b>Include a rating system for users to rate their experience with the vehicle and host.</li>
+        <li><b>Payment System: </b>Use a robust payment system for users to securely pay for their bookings.</li>
+        <li><b>ID Verification System: </b>Verify the identity of users and hosts through an ID verification system.</li>
+        <li><b>Photo Taking: </b>Take photos before and after using a car to check for damage.</li>
     </ul>
 
     <h3>Non-Functional Specifications:</h3>
     <ul>
-        <li>Security: Implement secure communication protocols to protect user data and transactions.</li>
-        <li>Usability: Provide an intuitive user interface with clear navigation and instructions.</li>
-        <li>Scalability: Design the architecture to easily scale to accommodate a growing user base and increasing traffic.</li>
-        <li>Compatibility: Ensure the app is compatible with both Android and iOS platforms.</li>
+        <li><b>Usability: </b>Provide an intuitive user interface with clear navigation and instructions.</li>
+        <li><b>Scalability: </b>Design the architecture to easily scale to accommodate a growing user base and increasing traffic.</li>
+        <li><b>Compatibility: </b>Ensure the app is compatible with both Android and iOS platforms.</li>
     </ul>
+    </section>
+</main>
 </body>
 </html>
