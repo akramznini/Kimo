@@ -41,7 +41,7 @@
                 </a>
             </li>
             <li class="project-link doc">
-                <a class="bare-link disabled" href="#">
+                <a class="bare-link" href="./report.html">
                     Rapport <svg class="ico" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M272 41.69V188a4 4 0 0 0 4 4h146.31a2 2 0 0 0 1.42-3.41L275.41 40.27a2 2 0 0 0-3.41 1.42z"></path><path d="M248 224a8 8 0 0 1-8-8V32H92a12 12 0 0 0-12 12v424a12 12 0 0 0 12 12h328a12 12 0 0 0 12-12V224zm104 160H160v-32h192zm0-80H160v-32h192z"></path></svg>
                 </a>
             </li>
@@ -62,10 +62,20 @@
             </p>
 
             <!-- Problématique -->
-            <p></p>		
+            <p>
+                Au Maroc, il existe un écart significatif dans le marché de la location de voitures malgré une forte demande provenant des habitants et des touristes. Les services de location de voitures traditionnels sont souvent incapables de répondre à cette demande,
+                 entraînant des pénuries fréquentes. De plus, le concept de possession de voiture devient moins pratique et plus coûteux en raison de la congestion urbaine et des coûts élevés associés à l'entretien d'un véhicule. 
+                En conséquence, il est nécessaire de trouver une solution innovante, pratique et durable pour relever ces défis de mobilité urbaine.
+            </p>		
 
             <!-- Proposition -->
-          <p></p>
+          <p>
+            Kimo est une plateforme de partage de voitures entre particuliers conçue pour répondre aux besoins de transport au Maroc en s'appuyant sur 
+            les principes de l'économie de partage (Pensez à Airbnb pour les voitures). La plateforme mettra en relation les propriétaires de véhicules avec les personnes ayant besoin 
+            d'un moyen de transport à court terme, offrant ainsi une alternative économique et durable à la possession et à la location de voitures 
+            traditionnelles. Ce faisant, Kimo vise à maximiser l'utilisation des véhicules existants, à réduire le nombre de voitures sur la route 
+            et à offrir une option de transport abordable tant pour les habitants que pour les touristes.
+          </p>
 
         </header>
 
@@ -74,17 +84,56 @@
             <h2>Exigences</h2>
 
             <h3>Besoins fonctionnels</h3>
+            <ul>
+                <li>
+                    <b>Fonctionnalité de Recherche :</b> Permettre aux utilisateurs de rechercher des véhicules en fonction du type, de la localisation, de la disponibilité, des évaluations et des avis.
+                </li>
+                <li>
+                    <b>Système de Réservation :</b> Permettre aux invités de réserver des véhicules directement sur la plateforme.
+                </li>
+                <li>
+                    <b>Messagerie :</b> Fournir un système de messagerie pour que les utilisateurs puissent communiquer avec les hôtes.
+                </li>
+                <li>
+                    <b>Enregistrement et Départ :</b> Offrir des fonctionnalités pour que les utilisateurs puissent s'enregistrer et se désenregistrer de leurs voyages.
+                </li>
+                <li>
+                    <b>Système d'Évaluation :</b> Inclure un système d'évaluation pour que les utilisateurs puissent noter leur expérience avec le véhicule et l'hôte.
+                </li>
+                <li>
+                    <b>Prise de photos :</b> Prendre des photos avant et après l'utilisation d'une voiture pour vérifier les dommages éventuels.
+                </li>
+                <li>
+                    <b>Système de paiement :</b> Utiliser un système de paiement robuste pour que les utilisateurs puissent payer leurs réservations en toute sécurité.
+                </li>
+            
+            </ul>
             <!-- TODO: Ajouter la liste des besoins fonctionnels de l'application -->
 
             <h3>Besoins non-fonctionnels</h3>
-
+            <ul>
+                <li>
+                    <b>Utilisabilité : </b> Fournir une interface utilisateur intuitive avec une navigation et des instructions claires.
+                </li>
+                <li>
+                    <b>Scalabilité : </b> Utiliser des services d'informatique en nuage pour pouvoir facilement évoluer afin de s'adapter à une base d'utilisateurs croissante et à l'augmentation du trafic.
+                </li>
+                <li>
+                    <b>Compatibilité : </b> Assurer la compatibilité de l'application avec les plateformes Android et iOS.
+                </li>
+            </ul>
             <!-- TODO: Ajouter la liste des besoins non-fonctionnels de l'application -->
 
         </section>
 
         <section class="content-wrapper">
             <h2>Infrastructure</h2>
-
+            <p>L'infrastructure de l'application Kimo sera conçue pour la scalabilité, la flexibilité et l'efficacité. 
+            Le front-end sera développé en utilisant Flutter, assurant une expérience utilisateur fluide et cohérente sur 
+            les plateformes Android et iOS. Firebase sera utilisé pour le backend, offrant des capacités de base de données en temps réel, 
+            d'authentification utilisateur et de stockage cloud pour les photos et autres médias. De plus, une base de données PostgreSQL sera 
+            utilisée pour gérer les relations de données complexes et garantir l'intégrité des données.
+            </p>
             <!-- TODO: Décrire l'infrastructure de l'application -->
         </section>
 
