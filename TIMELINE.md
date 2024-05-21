@@ -150,11 +150,23 @@
 - Étudier le domaine, les notions et outils envisagés pour le projet
 
 ### Réalisations
+## Analyse de l'Économie Collaborative :
+- Exploration de l'économie collaborative et de ses avantages, avec des exemples comme Airbnb et Uber.
+- Mise en évidence de la sous-utilisation des voitures et comment le covoiturage y répond.
+## Revue des Services Existants :
 
+- Identification des services de covoiturage tels que Communauto, Turo et Getaround.
+- Clarification que Kimo sera similaire à Turo, ciblant le marché marocain.
+
+## Opportunité de Marché au Maroc :
+- Constat de l'absence de services de covoiturage entre particuliers au Maroc.
+- Mise en avant de la forte demande de location de voitures chez les touristes et du potentiel économique.
+## Exigences du Projet :
+- Définition des spécifications fonctionnelles : recherche, réservation, messagerie, enregistrement/départ, notation, -- ---- paiement, vérification d'identité et prise de photos.
+- Définition des spécifications non fonctionnelles : facilité d'utilisation, évolutivité et compatibilité avec Android et iOS.
 <!-- Description des tâches accomplies -->
-- Petite etude de marche
-- exigences du projet
-- echeancier Gantt
+## Planification :
+- Création d'un diagramme de Gantt pour les quatre semaines à venir.
 
 ### Observations
 
