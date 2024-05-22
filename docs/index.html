@@ -137,6 +137,175 @@
             <!-- TODO: Décrire l'infrastructure de l'application -->
         </section>
 
+        <section class="content-wrapper">
+            <h2>Analyse des exigences</h2>
+            <h3>Cas d'utilisation</h3>
+            <h4>Inscription et creation de profil</h4>
+            <ul>
+                <li><b>Acteurs : </b>Nouvel utilisateur</li>
+                <li><b>Description : </b>Un nouvel utilisateur souhaite s'inscrire sur l'application Kimo et créer son profil.</li>
+                <li><b>Préconditions : </b>L'utilisateur a téléchargé l'application.</li>
+                <li><b>Scénario : </b>
+                    <ol>
+                        <li>L'utilisateur ouvre l'application Kimo.</li>
+                        <li>L'utilisateur sélectionne l'option "S'inscrire".</li>
+                        <li>L'utilisateur entre ses informations personnelles (nom, adresse e-mail, mot de passe).</li>
+                        <li>L'utilisateur reçoit un e-mail de vérification.</li>
+                        <li>L'utilisateur vérifie son e-mail.</li>
+                        <li>L’utilisateur entre son numero de telephone.</li>
+                        <li>L’utilisateur vérifie son numéro de téléphone.</li>
+                        <li>9.	L'utilisateur complète son profil en ajoutant une photo, une adresse, son permis de conduire et des informations de paiement.</li>
+                    </ol>
+                
+                </li>
+            </ul>
+            
+            <h4>Recherche et réservation d'un véhicule</h4>
+            <ul>
+                <li><b>Acteurs : </b>Utilisateur inscrit</li>
+                <li><b>Description : </b>Un utilisateur souhaite rechercher et réserver un véhicule pour une période donnée.</li>
+                <li><b>Préconditions : </b>L'utilisateur est connecté à son compte et a complété son profil.</li>
+                <li><b>Scénario : </b>
+                    <ol>
+                        <li>L'utilisateur ouvre l'application Kimo et accède à l'onglet de recherche.</li>
+                        <li>L'utilisateur entre les détails de la recherche (localisation, dates, type de véhicule).</li>
+                        <li>L'application affiche une liste de véhicules disponibles correspondant aux critères.</li>
+                        <li>L'utilisateur sélectionne un véhicule pour voir les détails (prix, photos, options, avis).</li>
+                        <li>L'utilisateur clique sur "Réserver".</li>
+                        <li>L'utilisateur confirme la réservation et procède au paiement.</li>
+                        <li>L'utilisateur reçoit une confirmation de réservation avec les détails de la location.</li>
+                    </ol>
+                
+                </li>
+            </ul>
+
+            <h4>Ajout d'un véhicule à la plateforme</h4>
+            <ul>
+                <li><b>Acteurs : </b>Propriétaire de véhicule inscrit</li>
+                <li><b>Description : </b>Un propriétaire souhaite ajouter son véhicule à la plateforme Kimo pour le louer.</li>
+                <li><b>Préconditions : </b>Le propriétaire est connecté à son compte et a complété son profil.</li>
+                <li><b>Scénario : </b>
+                    <ol>
+                        <li>Le propriétaire accède à l'onglet "Ajouter un véhicule".</li>
+                        <li>Le propriétaire entre les détails du véhicule (marque, modèle, année, immatriculation, etc.).</li>
+                        <li>Le propriétaire télécharge des photos du véhicule.</li>
+                        <li>Le propriétaire définit les prix de location et les disponibilités.</li>
+                        <li>Le propriétaire accepte les termes et conditions de location.</li>
+                        <li>Le propriétaire soumet le véhicule pour approbation.</li>
+                        <li>Le véhicule est approuvé et ajouté à la liste des véhicules disponibles sur Kimo.</li>
+                    </ol>
+                
+                </li>
+            </ul>
+            <h4>Gestion de la location</h4>
+            <ul>
+                <li><b>Acteurs : </b>Utilisateur, Propriétaire de véhicule</li>
+                <li><b>Description : </b>L'utilisateur et le propriétaire gèrent les aspects logistiques de la location (remise des clés, état des lieux).</li>
+                <li><b>Préconditions : </b>Une réservation est confirmée.</li>
+                <li><b>Scénario : </b>
+                    <ol>
+                        <li>L'utilisateur et le propriétaire communiquent via l'application pour convenir d'un lieu et d'une heure pour la remise des clés.</li>
+                        <li>Le jour de la location, le propriétaire et l'utilisateur se rencontrent.</li>
+                        <li>Le propriétaire effectue un état des lieux avec l'utilisateur.</li>
+                        <li>Les deux parties confirment l'état du véhicule via l'application.</li>
+                        <li>À la fin de la location, l'utilisateur et le propriétaire se rencontrent à nouveau pour la restitution du véhicule.</li>
+                        <li>Un nouvel état des lieux est effectué et confirmé via l'application.</li>
+                        <li>Le propriétaire note l'utilisateur et vice versa.</li>
+                    </ol>
+                
+                </li>
+            </ul>
+            <h3>Scénario</h3>
+            <h4>Recherche et réservation d'un véhicule</h4>
+            <ol>
+                <li><b>Initialisation : </b>L'utilisateur ouvre l'application et accède à l'écran d'accueil.</li>
+                <li><b>Recherche : </b>
+                    <ul>
+                        <li>
+                            L'utilisateur entre les détails de recherche : Casablanca, du 1er au 5 juin, catégorie SUV.
+                        </li>
+                        <li>
+                            L'application affiche une liste de SUV disponibles à Casablanca pour les dates spécifiées.
+                        </li>
+                    </ul>
+                </li>
+                <li><b>Sélection : </b>
+                    <ul>
+                        <li>
+                            L'utilisateur parcourt les options et sélectionne un SUV de marque Toyota.
+                        </li>
+                        <li>
+                            L'application affiche les détails : photos, description, prix par jour, avis des précédents locataires.
+                        </li>
+                    </ul>
+                </li>
+                <li><b>Réservation : </b>
+                    <ul>
+                        <li>
+                            L'utilisateur clique sur "Réserver".
+                        </li>
+                        <li>
+                            L'utilisateur confirme les dates et le prix total.
+                        </li>
+                        <li>
+                            L'utilisateur procède au paiement en entrant les informations de sa carte de crédit.
+                        </li>
+                    </ul>
+                </li>
+                <li><b>Confirmation : </b>
+                    <ul>
+                        <li>
+                            L'application affiche un message de confirmation de réservation.
+                        </li>
+                        <li>
+                            L'utilisateur reçoit un e-mail avec les détails de la réservation.
+                        </li>
+                    </ul>
+                </li>
+                <li><b>Préparation à la location : </b>L'utilisateur et le propriétaire communiquent via l'application pour convenir des détails de la remise des clés.
+                </li>
+                <li><b>Jour de la location : </b>
+                    <ul>
+                        <li>
+                            L'utilisateur rencontre le propriétaire à l'adresse convenue.
+                        </li>
+                        <li>
+                            Les deux effectuent un état des lieux et le confirment via l'application.
+                        </li>
+                        <li>
+                            L'utilisateur commence sa période de location.
+                        </li>
+                    </ul>
+                </li>
+                <li><b>Retour du véhicule : </b>
+                    <ul>
+                        <li>
+                            À la fin de la période de location, l'utilisateur et le propriétaire se rencontrent pour la restitution.
+                        </li>
+                        <li>
+                            Un nouvel état des lieux est effectué et confirmé.
+                        </li>
+                        <li>
+                            L'utilisateur et le propriétaire se notent mutuellement sur l'application.
+                        </li>
+                    </ul>
+                </li>
+                <li><b>Scénario : </b>
+                    <ol>
+                        <li>L'utilisateur et le propriétaire communiquent via l'application pour convenir d'un lieu et d'une heure pour la remise des clés.</li>
+                        <li>Le jour de la location, le propriétaire et l'utilisateur se rencontrent.</li>
+                        <li>Le propriétaire effectue un état des lieux avec l'utilisateur.</li>
+                        <li>Les deux parties confirment l'état du véhicule via l'application.</li>
+                        <li>À la fin de la location, l'utilisateur et le propriétaire se rencontrent à nouveau pour la restitution du véhicule.</li>
+                        <li>Un nouvel état des lieux est effectué et confirmé via l'application.</li>
+                        <li>Le propriétaire note l'utilisateur et vice versa.</li>
+                    </ol>
+                
+                </li>
+            </ol>
+
+        </section>
+
         <section class="content-wrapper progress-section">
             <header class="progress-section-header">
                 <h2 style="font-size: 3.3em; font-weight: 800;">Rapport d'avancement</h2>
@@ -180,6 +349,7 @@
                 <div class="week-content">
                     <h4 class="title">Objectifs</h4>
                     <ul>
+                        
                     </ul>
 
                     <h4 class="title">Réalisations</h4>
@@ -209,6 +379,38 @@
 
                     <h4 class="title">Réalisations</h4>
                     <ul>
+                        <li>
+                            <h4>Introduction du Projet</h4>
+                            <p>Définition de l'objectif de Kimo comme une plateforme de covoiturage entre particuliers, offrant une alternative pratique, économique et durable pour le transport.</p>
+                        </li>
+                
+                        <li>
+                            <h4>Analyse de l'Économie Collaborative</h4>
+                            <p>Exploration de l'économie collaborative et de ses avantages, avec des exemples comme Airbnb et Uber. Mise en évidence de la sous-utilisation des voitures et comment le covoiturage y répond.</p>
+                        </li>
+                
+                        <li>
+                            <h4>Revue des Services Existants</h4>
+                            <p>Identification des services de covoiturage tels que Communauto, Turo et Getaround. Clarification que Kimo sera similaire à Turo, ciblant le marché marocain.</p>
+                        </li>
+                
+                        <li>
+                            <h4>Opportunité de Marché au Maroc</h4>
+                            <p>Constat de l'absence de services de covoiturage entre particuliers au Maroc. Mise en avant de la forte demande de location de voitures chez les touristes et du potentiel économique.</p>
+                        </li>
+                
+                        <li>
+                            <h4>Exigences du Projet</h4>
+                            <ul>
+                                <li>Spécifications fonctionnelles : recherche, réservation, messagerie, enregistrement/départ, notation, paiement, vérification d'identité et prise de photos.</li>
+                                <li>Spécifications non fonctionnelles : facilité d'utilisation, évolutivité et compatibilité avec Android et iOS.</li>
+                            </ul>
+                        </li>
+                
+                        <li>
+                            <h4>Planification</h4>
+                            <p>Création d'un diagramme de Gantt pour les quatre semaines à venir.</p>
+                        </li>
                     </ul>
 
                     <h4 class="title">Notes</h4>
