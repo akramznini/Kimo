@@ -1,6 +1,7 @@
 # Projet IFT3150: Kimo – Application de location de voitures entre particuliers 
 
 > **Page web du projet (IFT3150)**: https://akramznini.github.io/Kimo/
+> **Lien Figma**: https://www.figma.com/design/mZ2XXmH5m2f8tBMWmyUhmr/Untitled?node-id=0-1&t=3XbdQsX0y59m7juZ-1
 
 ## Description du projet 
 
