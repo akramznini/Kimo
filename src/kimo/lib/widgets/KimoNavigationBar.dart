@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -31,13 +31,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 22, 158, 255)),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -48,27 +48,28 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
+  final String title;
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedTab = 0;
+  int _counter = 0;
 
-  void _onChangedTab(int newTab) {
+  void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _selectedTab = newTab;
+      _counter++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    Color greySelected = Color.fromARGB(255, 228, 228, 228);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -76,6 +77,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
+      appBar: AppBar(
+        // TRY THIS: Try changing the color here to a specific color (to
+        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+        // change color while the other colors stay the same.
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+      ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -95,48 +105,23 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(child: Placeholder(),),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  
-                  GestureDetector(onTap: () {_onChangedTab(0);}, child: NavigationDestination(selected: _selectedTab == 0, svgPathSelected: "assets/icons/navbar-home-selected.svg" , svgPath: "assets/icons/navbar-home.svg", label: "HOME",)),
-                  GestureDetector(onTap: () {_onChangedTab(1);}, child: NavigationDestination(selected: _selectedTab == 1, svgPathSelected: "assets/icons/navbar-wishlist-selected.svg" , svgPath: "assets/icons/navbar-wishlist.svg", label: "WISHLIST",)),
-                  GestureDetector(onTap: () {_onChangedTab(2);}, child: NavigationDestination(selected: _selectedTab == 2, svgPathSelected: "assets/icons/navbar-home-selected.svg" , svgPath: "assets/icons/navbar-home.svg", label: "HOME",)),
-                  GestureDetector(onTap: () {_onChangedTab(3);}, child: NavigationDestination(selected: _selectedTab == 3, svgPathSelected: "assets/icons/navbar-home-selected.svg" , svgPath: "assets/icons/navbar-home.svg", label: "HOME",)),
-                  GestureDetector(onTap: () {_onChangedTab(4);}, child: NavigationDestination(selected: _selectedTab == 4, svgPathSelected: "assets/icons/navbar-home-selected.svg" , svgPath: "assets/icons/navbar-home.svg", label: "HOME",)),
-                  ],
-              ),
+            const Text(
+              'You pushed the button this many times:',
+            ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
 
-class NavigationDestination extends StatelessWidget {
-  final bool selected;
-  final String svgPath;
-  final String label;
-  final String svgPathSelected;
-  const NavigationDestination({
-    super.key,
-    required this.selected,
-    required this.svgPath,
-    required this.label,
-    required this.svgPathSelected
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final Color greySelected = Color.fromARGB(255, 228, 228, 228);
-    return Container(child: Padding(
-      padding: const EdgeInsets.only(top: 6.0, bottom: 6.0, left: 10, right: 10),
-      child: Column(children: <Widget>[SvgPicture.asset(selected ? svgPathSelected : svgPath, height: 35, width: 35,), Text(label, style: TextStyle(fontSize: 8, fontWeight: FontWeight.w600),),]),
-    ), decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: selected? greySelected : null),);
-  }
-}
 
