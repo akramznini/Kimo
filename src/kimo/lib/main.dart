@@ -76,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    List<Widget> tabs = [HomeTab(greySelected: greySelected), Text("1"), Text("2"), Text("3"), Text("4")];
     return Scaffold(
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -97,14 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
-              children: [
-                CarPreviewContainer(),
-                CarPreviewContainer(),
-                CarPreviewContainer(),
-              ],
-            ),
-
+            tabs[_selectedTab],
             Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               child: Row(
@@ -126,6 +120,78 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+class HomeTab extends StatelessWidget {
+  const HomeTab({
+    super.key,
+    required this.greySelected,
+  });
+
+  final Color greySelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset('assets/images/kimo-logo.png', width: 130, height: 65, fit: BoxFit.cover,),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(child: IconButton(onPressed: (){}, icon: Icon(Icons.search)), decoration: BoxDecoration(color: greySelected, borderRadius: BorderRadius.circular(30)),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(child: IconButton(onPressed: (){}, icon: Icon(Icons.notifications)), decoration: BoxDecoration(color: greySelected, borderRadius: BorderRadius.circular(30)),),
+                ),
+              ],
+            ),
+          ],
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("CARS NEAR YOU", style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.w900),),
+                  Row(
+                    children: [
+                      CarPreviewContainer(),
+                      CarPreviewContainer(),
+                      CarPreviewContainer(),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("TOP PICKS FOR  YOU", style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.w900),),
+                  Row(
+                    children: [
+                      CarPreviewContainer(),
+                      CarPreviewContainer(),
+                      CarPreviewContainer(),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class CarPreviewContainer extends StatelessWidget {
   const CarPreviewContainer({
     super.key,  });
@@ -138,7 +204,7 @@ class CarPreviewContainer extends StatelessWidget {
     String carName = "Volkswagen Beetle";
     return IntrinsicWidth(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(right: 8.0, top: 8, bottom: 12),
         child: Container(
           decoration: BoxDecoration(border: Border.all(color: Colors.grey, width: 0.5), borderRadius: BorderRadius.circular(22)),
           child: ClipRRect(
