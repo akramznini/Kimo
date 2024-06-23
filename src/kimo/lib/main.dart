@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     GestureDetector(onTap: () {_onChangedTab(0);}, child: CustomNavigationDestination(selected: _selectedTab == 0, svgPathSelected: "assets/icons/navbar-home-selected.svg" , svgPath: "assets/icons/navbar-home.svg", label: "HOME",)),
                     GestureDetector(onTap: () {_onChangedTab(1);}, child: CustomNavigationDestination(selected: _selectedTab == 1, svgPathSelected: "assets/icons/navbar-wishlist-selected.svg" , svgPath: "assets/icons/navbar-wishlist.svg", label: "WISHLIST",)),
                     GestureDetector(onTap: () {_onChangedTab(2);}, child: CustomNavigationDestination(selected: _selectedTab == 2, svgPathSelected: "assets/icons/navbar-messages-selected.svg" , svgPath: "assets/icons/navbar-messages.svg", label: "MESSAGES",)),
-                    GestureDetector(onTap: () {_onChangedTab(3);}, child: CustomNavigationDestination(selected: _selectedTab == 3, svgPathSelected: "assets/icons/navbar-trips.svg" , svgPath: "assets/icons/navbar-trips.svg", label: "TRIPS",)),
+                    GestureDetector(onTap: () {_onChangedTab(3);}, child: CustomNavigationDestination(selected: _selectedTab == 3, svgPathSelected: "assets/icons/navbar-trips-selected.svg" , svgPath: "assets/icons/navbar-trips.svg", label: "TRIPS",)),
                     GestureDetector(onTap: () {_onChangedTab(4);}, child: CustomNavigationDestination(selected: _selectedTab == 4, svgPathSelected: "assets/icons/navbar-profile-selected.svg" , svgPath: "assets/icons/navbar-profile.svg", label: "ACCOUNT",)),
                     ],
                 ),
