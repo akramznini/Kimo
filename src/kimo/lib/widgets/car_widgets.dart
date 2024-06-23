@@ -6,21 +6,25 @@ class CarPreviewContainer extends StatelessWidget {
     required this.imagePath,
     required this.carName,
     required this.nbReviews,
-    required this.rating
+    required this.rating,
+    required this.height,
+    required this.width
     });
 
   final String imagePath;
   final String carName;
   final int nbReviews;
   final double rating;
+  final double height;
+  final double width;
   @override
   Widget build(BuildContext context) {
-    Image carImage = Image.asset(imagePath, height: 120, width: 160, fit: BoxFit.cover,);
+    Image carImage = Image.asset(imagePath, height: height, width: width, fit: BoxFit.cover,);
     return IntrinsicWidth(
       child: Padding(
         padding: const EdgeInsets.only(right: 8.0, top: 8, bottom: 12),
         child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.grey, width: 0.5), borderRadius: BorderRadius.circular(22)),
+          decoration: BoxDecoration(border: Border.all(color: Color.fromARGB(255, 213, 213, 213), width: 0.5), borderRadius: BorderRadius.circular(22)),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(22),
             child: Column(

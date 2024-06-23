@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:kimo/screens/home_tab.dart';
 import 'package:kimo/widgets/navigation_widgets.dart';
+import 'package:kimo/screens/wishlist_tab.dart';
+import 'package:kimo/utils/theme_values.dart';
+import 'package:kimo/screens/messages_tab.dart';
+
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  static const Color greySelected = Color.fromARGB(255, 228, 228, 228);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Kimo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        
+        scaffoldBackgroundColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 22, 158, 255)),
         useMaterial3: true,
       ),
@@ -42,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     
-    List<Widget> tabs = [HomeTab(), Text("1"), Text("2"), Text("3"), Text("4")];
+    List<Widget> tabs = [HomeTab(), WishlistTab(), MessagesTab(), Text("3"), Text("4")];
     return Scaffold(
       body: SafeArea(
         
@@ -53,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Expanded(child: tabs[_selectedTab]),
             Container(
-              decoration: BoxDecoration(boxShadow: [BoxShadow(color: MyApp.greySelected, blurRadius: 10, spreadRadius: 10)], color: Colors.white),
+              decoration: BoxDecoration(boxShadow: [BoxShadow(color: greySelected, blurRadius: 10, spreadRadius: 10)], color: Colors.white),
               child: Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: Row(
