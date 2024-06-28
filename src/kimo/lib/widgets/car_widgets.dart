@@ -144,6 +144,7 @@ class TripInfoContainer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top:4, bottom:4, left: 8, right: 8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,8 +162,8 @@ class TripInfoContainer extends StatelessWidget {
             ],
           ),
           Column(children: [
-            Text(checkInDate.toString()),
-            Text(checkOutDate.toString())
+            Text("${checkInDate.day}/${checkInDate.month}/${checkInDate.year}", style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w300),),
+            Text("${checkOutDate.day}/${checkOutDate.month}/${checkOutDate.year}", style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w300),),
           ],)
         ],
       ),

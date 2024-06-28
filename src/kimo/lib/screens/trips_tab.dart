@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:kimo/widgets/car_widgets.dart';
 Widget widget = TripsTab();
 
 class TripsTab extends StatelessWidget {
@@ -15,12 +15,12 @@ class TripsTab extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 16, bottom: 8),
-          child: Text("Messages", style: GoogleFonts.roboto(color: Colors.black, fontSize:  16, fontWeight: FontWeight.bold)),
+          child: Text("Trips", style: GoogleFonts.roboto(color: Colors.black, fontSize:  16, fontWeight: FontWeight.bold)),
         ),
         
         Expanded(child: ListView(
-          
-        ),)
+          children: [Center(child: TripPreviewContainer(carName: "Honda Civic", imagePath: "assets/images/car-volkswagen.jpg", location: "9705 Rue Basile-Routhier", checkInDate: DateTime.parse('1969-07-20 20:18:04Z'), checkOutDate: DateTime.parse('1969-07-20 20:18:04Z'), height: 120, width: 260,))
+      ]),)
         
         ]);
   }

@@ -4,6 +4,7 @@ import 'package:kimo/widgets/navigation_widgets.dart';
 import 'package:kimo/screens/wishlist_tab.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/screens/messages_tab.dart';
+import 'package:kimo/screens/trips_tab.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     
-    List<Widget> tabs = [HomeTab(), WishlistTab(), MessagesTab(), Text("3"), Text("4")];
+    List<Widget> tabs = [HomeTab(), WishlistTab(), MessagesTab(), TripsTab(), Text("4")];
     return Scaffold(
       body: SafeArea(
         
