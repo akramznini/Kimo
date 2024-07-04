@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kimo/firebase_options.dart';
 import 'package:kimo/screens/home_tab.dart';
 import 'package:kimo/widgets/navigation_widgets.dart';
 import 'package:kimo/screens/wishlist_tab.dart';
@@ -6,8 +7,11 @@ import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/screens/messages_tab.dart';
 import 'package:kimo/screens/trips_tab.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -48,6 +52,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth.instance
+  .authStateChanges()
+  .listen((User? user) {
+    if (user == null) {
+      print('User is currently signed out!');
+    } else {
+      print('User is signed in!');
+    }
+  });
     
     List<Widget> tabs = [HomeTab(), WishlistTab(), MessagesTab(), TripsTab(), Text("4")];
     return Scaffold(
