@@ -6,6 +6,7 @@ import 'package:kimo/screens/wishlist_tab.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/screens/messages_tab.dart';
 import 'package:kimo/screens/trips_tab.dart';
+import 'package:kimo/screens/account_tab.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -43,7 +44,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedTab = 0;
-
+  User ?currentUser;
   void _onChangedTab(int newTab) {
     setState(() {
       _selectedTab = newTab;
@@ -55,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     FirebaseAuth.instance
   .authStateChanges()
   .listen((User? user) {
+    currentUser = user;
     if (user == null) {
       print('User is currently signed out!');
     } else {
@@ -62,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   });
     
-    List<Widget> tabs = [HomeTab(), WishlistTab(), MessagesTab(), TripsTab(), Text("4")];
+    List<Widget> tabs = [HomeTab(), WishlistTab(), MessagesTab(), TripsTab(), AccountTab(user: currentUser,)];
     return Scaffold(
       body: SafeArea(
         
