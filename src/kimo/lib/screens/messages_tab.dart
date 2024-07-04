@@ -21,7 +21,7 @@ class MessagesTab extends StatelessWidget {
           child: ListView(
             children: [
               ConversationPreview(recipient: "Jamal", carName: "Volkswagen Beetle", lastMessage: "your car is ready for pick up! You fill find the keys in the box below",
-            recipientProfilePicturePath: "assets/images/profile-picture.jpeg", nbUnseenMessages: 3,),
+            recipientProfilePicturePath: "assets/images/profile-picture.jpeg", nbUnseenMessages: 0,),
             ConversationPreview(recipient: "Jamal", carName: "Volkswagen Beetle", lastMessage: "your car is ready for pick up! You fill find the keys in the box below",
             recipientProfilePicturePath: "assets/images/profile-picture.jpeg", nbUnseenMessages: 3,),
             ConversationPreview(recipient: "Jamal", carName: "Volkswagen Beetle", lastMessage: "your car is ready for pick up! You fill find the keys in the box below",

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "135583262145",
+    "project_id": "kimo-3f95e",
+    "storage_bucket": "kimo-3f95e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:135583262145:android:213ec711a52d4023f6fb40",
+        "android_client_info": {
+          "package_name": "com.atlastechnologies.kimo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiaMWMG9l3zFQulxIjzyaIB2pP-1SuSao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

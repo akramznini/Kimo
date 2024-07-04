@@ -5,6 +5,7 @@ import 'package:kimo/screens/wishlist_tab.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/screens/messages_tab.dart';
 import 'package:kimo/screens/trips_tab.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   runApp(const MyApp());
