@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/screens/sign_in_page.dart';
@@ -16,8 +17,15 @@ class AccountTab extends StatefulWidget {
 }
 
 class _AccountTabState extends State<AccountTab> {
+  void showSignInBottomSheet(){
+showModalBottomSheet(context: context, isScrollControlled: true,builder: (BuildContext context){
+                    return FractionallySizedBox(heightFactor: 0.85,child: SignInPage());
+                  });
+  }
+  
   @override
   Widget build(BuildContext context) {
+    
     bool isSignedIn = (widget.user != null);
     print(isSignedIn);
     Widget signedOutPage = Padding(
@@ -37,9 +45,7 @@ class _AccountTabState extends State<AccountTab> {
                     context,
                     MaterialPageRoute(builder: (context) => const SignInPage())
                   );*/
-                  showModalBottomSheet(context: context, isScrollControlled: true,builder: (BuildContext context){
-                    return FractionallySizedBox(heightFactor: 0.85,child: SignInPage());
-                  });
+                  showSignInBottomSheet();
                 }, 
                 child: Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),
@@ -51,13 +57,33 @@ class _AccountTabState extends State<AccountTab> {
             children: [
               Text("Don't have an account?", style: GoogleFonts.roboto(),),
               SizedBox(width: 6,),
-              Text("Sign up", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, textStyle: TextStyle(decoration: TextDecoration.underline)),),
+              GestureDetector(onTap: (){showSignInBottomSheet();} ,child: Text("Sign up", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, textStyle: TextStyle(decoration: TextDecoration.underline)),)),
             ],
           )
         ],
       ),
     );
 
-    return isSignedIn ? Text("Signed In") : signedOutPage;
+    return isSignedIn ? Column(
+      children: [
+        ElevatedButton(onPressed: () async {
+        print("button pressed");
+         await widget.user?.updateDisplayName("Akram Znini");
+         FirebaseFirestore db = FirebaseFirestore.instance;
+         await db.collection("users").get().then((event) {
+          for (var doc in event.docs) {
+            print("${doc.id} => ${doc.data()}");
+                                      }
+                                                          });
+        final car = <String, dynamic>{
+          "model" : "Picassou"
+        };
+        db.collection("cars").add(car);
+        }, child: Text("set info")),
+        Text("UID: ${widget.user?.uid}"),
+        Text("displayName: ${widget.user?.displayName}"),
+        Text("photoURL: ${widget.user?.photoURL}")
+      ],
+    ) : signedOutPage;
   }
 }

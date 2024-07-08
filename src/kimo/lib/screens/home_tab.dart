@@ -1,28 +1,54 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/widgets/car_widgets.dart';
 import 'package:kimo/utils/theme_values.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 class HomeTab extends StatefulWidget {
   const HomeTab({
     super.key,
   });
-  
   @override
   State<HomeTab> createState() => _HomeTabState();
 }
 
 class _HomeTabState extends State<HomeTab> {
+  bool dataRetrieved = true;
+  late String imgUrl;
   bool blurred = false;
   double blurRadius = 0;
   double searchBoxPosition = 0;
   double searchBoxOpacity = 0;
   double arrowBackLeftPosition = 80;
   DateTimeRange dateRange = DateTimeRange(start: DateTime.now(), end: DateTime.now());
+
+  Future<void> loadImage() async {
+    try {
+      final storageReference = FirebaseStorage.instance.ref();
+      String imgUrl1 = await storageReference.child("car_pictures/car-volkswagen.jpg").getDownloadURL();
+
+      setState(() {
+        imgUrl = imgUrl1;
+        dataRetrieved = true;
+      });
+    } catch (e) {
+      print('Error loading image: $e');
+      // Handle error gracefully, e.g., show a placeholder image or error message
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadImage();
+  }
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    Widget pageContent;
+    if (dataRetrieved) {
+      pageContent = Stack(
       children: [Column(
         children: [
           Padding(
@@ -67,9 +93,9 @@ class _HomeTabState extends State<HomeTab> {
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: [
-                            CarPreviewContainer(imagePath: "assets/images/car-volkswagen.jpg", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                            CarPreviewContainer(imagePath: "assets/images/car-volkswagen.jpg", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                            CarPreviewContainer(imagePath: "assets/images/car-volkswagen.jpg", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
+                            CarPreviewContainer(imageUrl: "https://hips.hearstapps.com/hmg-prod/images/2019-honda-civic-sedan-1558453497.jpg", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
+                            CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar-volkswagen.jpg?alt=media&token=7e2e6961-338b-4121-89a6-6e34c3e02032", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
+                            CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar-volkswagen.jpg?alt=media&token=7e2e6961-338b-4121-89a6-6e34c3e02032", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
                           ],
                         ),
                       ),
@@ -88,9 +114,9 @@ class _HomeTabState extends State<HomeTab> {
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: [
-                            CarPreviewContainer(imagePath: "assets/images/car-volkswagen.jpg", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                            CarPreviewContainer(imagePath: "assets/images/car-volkswagen.jpg", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                            CarPreviewContainer(imagePath: "assets/images/car-volkswagen.jpg", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
+                            CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar2.jpg?alt=media&token=aaef9981-1f94-4dc9-b735-c269fb20681a", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
+                            CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar-volkswagen.jpg?alt=media&token=7e2e6961-338b-4121-89a6-6e34c3e02032", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
+                            CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar-volkswagen.jpg?alt=media&token=7e2e6961-338b-4121-89a6-6e34c3e02032", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
                           ],
                         ),
                       ),
@@ -171,6 +197,13 @@ class _HomeTabState extends State<HomeTab> {
         left: arrowBackLeftPosition,
         ) : Container(),
     ]);
+    }
+    else {
+      pageContent = Center(child: Container(width: 50, height: 50 ,child: CircularProgressIndicator()));
+    }
+    
+
+    return pageContent;
   }
 }
 

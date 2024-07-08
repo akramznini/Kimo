@@ -24,11 +24,11 @@ class WishlistTab extends StatelessWidget {
                           
                           children: [
                             
-                            Center(
+                            /*Center(
                               child: Stack(
                                 alignment: Alignment.topRight,
                                 children: [
-                                CarPreviewContainer(carName: "Lamborghini Huracan", imagePath: "assets/images/car-volkswagen.jpg", nbReviews: 120, rating: 4.9, height: 120, width: 260,),
+                                CarPreviewContainer(carName: "Lamborghini Huracan", imageData: "assets/images/car-volkswagen.jpg", nbReviews: 120, rating: 4.9, height: 120, width: 260,),
                                 Positioned(top: 16, right: 16, child: Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)), child: IconButton(icon: Icon(Icons.favorite, color: onPrimary,), iconSize: 20 ,onPressed: (){},)))
                               ],),
                             ),
@@ -37,7 +37,7 @@ class WishlistTab extends StatelessWidget {
                                       
                                 alignment: Alignment.topRight,
                                 children: [
-                                CarPreviewContainer(carName: "Lamborghini Huracan", imagePath: "assets/images/car-volkswagen.jpg", nbReviews: 120, rating: 4.9, height: 120, width: 260,),
+                                CarPreviewContainer(carName: "Lamborghini Huracan", imageData: "assets/images/car-volkswagen.jpg", nbReviews: 120, rating: 4.9, height: 120, width: 260,),
                                 Positioned(top: 16, right: 16, child: Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)), child: IconButton(icon: Icon(Icons.favorite, color: onPrimary,), iconSize: 20 ,onPressed: (){},)))
                               ],),
                             ),
@@ -45,10 +45,10 @@ class WishlistTab extends StatelessWidget {
                               child: Stack(
                                 alignment: Alignment.topRight,
                                 children: [
-                                CarPreviewContainer(carName: "Lamborghini Huracan", imagePath: "assets/images/car-volkswagen.jpg", nbReviews: 120, rating: 4.9, height: 120, width: 260,),
+                                CarPreviewContainer(carName: "Lamborghini Huracan", imageData: "assets/images/car-volkswagen.jpg", nbReviews: 120, rating: 4.9, height: 120, width: 260,),
                                 Positioned(top: 16, right: 16, child: Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)), child: IconButton(icon: Icon(Icons.favorite, color: onPrimary,), iconSize: 20 ,onPressed: (){},)))
                               ],),
-                            )
+                            )*/
                           ],
                         ),
                       ),

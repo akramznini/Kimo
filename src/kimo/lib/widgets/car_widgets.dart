@@ -1,9 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 class CarPreviewContainer extends StatelessWidget {
   const CarPreviewContainer({
     super.key,
-    required this.imagePath,
+    required this.imageUrl,
     required this.carName,
     required this.nbReviews,
     required this.rating,
@@ -11,7 +13,7 @@ class CarPreviewContainer extends StatelessWidget {
     required this.width
     });
 
-  final String imagePath;
+  final String imageUrl;
   final String carName;
   final int nbReviews;
   final double rating;
@@ -19,7 +21,7 @@ class CarPreviewContainer extends StatelessWidget {
   final double width;
   @override
   Widget build(BuildContext context) {
-    Image carImage = Image.asset(imagePath, height: height, width: width, fit: BoxFit.cover,);
+    Image carImage = Image.network(imageUrl, height: height, width: width, fit: BoxFit.cover,);
     return IntrinsicWidth(
       child: Padding(
         padding: const EdgeInsets.only(right: 8.0, top: 8, bottom: 12),
