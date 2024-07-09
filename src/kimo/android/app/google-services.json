@@ -26,6 +26,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:135583262145:android:5f8262fd658f3f8ff6fb40",
+        "android_client_info": {
+          "package_name": "com.example.kimo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiaMWMG9l3zFQulxIjzyaIB2pP-1SuSao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:135583262145:android:83a1dcd08f2d443af6fb40",
         "android_client_info": {
           "package_name": "com.kimo.kimo"
