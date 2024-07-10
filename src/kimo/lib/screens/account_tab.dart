@@ -5,6 +5,7 @@ import 'package:kimo/screens/sign_in_page.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:kimo/utils/helper_functions.dart';
 
 class AccountTab extends StatefulWidget {
   const AccountTab({
@@ -70,19 +71,20 @@ showModalBottomSheet(context: context, isScrollControlled: true,builder: (BuildC
         print("button pressed");
          await widget.user?.updateDisplayName("Akram Znini");
          FirebaseFirestore db = FirebaseFirestore.instance;
-         await db.collection("users").get().then((event) {
-          for (var doc in event.docs) {
-            print("${doc.id} => ${doc.data()}");
-                                      }
-                                                          });
-        final car = <String, dynamic>{
-          "model" : "Picassou"
-        };
-        db.collection("cars").add(car);
+         Timestamp startDate = new Timestamp.fromDate(DateTime(2024, 08, 03));
+         Timestamp endDate = new Timestamp.fromDate(DateTime(2024, 08, 06));
+        var query = db.collection("listings").where('startDate', isLessThanOrEqualTo: startDate).where('endDate', isGreaterThanOrEqualTo: endDate).get().then((querySnapshot) {
+           print("query results:");
+           print(querySnapshot.docs.length);
+           for (var docSnapshot in querySnapshot.docs) {
+      print('${docSnapshot.id} => ${docSnapshot.data()}');
+    }
+        });
+
         }, child: Text("set info")),
         Text("UID: ${widget.user?.uid}"),
         Text("displayName: ${widget.user?.displayName}"),
-        Text("photoURL: ${widget.user?.photoURL}")
+        Text("photoURL: ${widget.user?.photoURL}"),
       ],
     ) : signedOutPage;
   }

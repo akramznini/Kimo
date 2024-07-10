@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/utils/theme_values.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MessagesTab extends StatelessWidget {
   const MessagesTab({
     super.key,
+    required this.user
   });
+  
+  final User ?user;
 
   @override
   Widget build(BuildContext context) {

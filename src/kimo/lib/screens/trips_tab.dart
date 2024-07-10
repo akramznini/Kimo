@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/widgets/car_widgets.dart';
-Widget widget = TripsTab();
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TripsTab extends StatelessWidget {
   const TripsTab({
     super.key,
+    required this.user
   });
-
+  final User ?user;
   @override
   Widget build(BuildContext context) {
     return Column(
