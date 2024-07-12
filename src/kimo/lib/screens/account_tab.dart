@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -73,6 +75,7 @@ showModalBottomSheet(context: context, isScrollControlled: true,builder: (BuildC
          FirebaseFirestore db = FirebaseFirestore.instance;
          Timestamp startDate = new Timestamp.fromDate(DateTime(2024, 08, 03));
          Timestamp endDate = new Timestamp.fromDate(DateTime(2024, 08, 06));
+         
         var query = db.collection("listings").where('startDate', isLessThanOrEqualTo: startDate).where('endDate', isGreaterThanOrEqualTo: endDate).get().then((querySnapshot) {
            print("query results:");
            print(querySnapshot.docs.length);

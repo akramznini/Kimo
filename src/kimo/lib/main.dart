@@ -107,8 +107,8 @@ class _MyHomePageState extends State<MyHomePage> {
   if (geolocation == null) {
       geolocation = determinePosition();
   }
-    if (tabs.length == 0) {
-    tabs = [HomeTab(geolocation: geolocation!, user: currentUser,), WishlistTab(user: currentUser,), MessagesTab(user: currentUser,), TripsTab(user: currentUser,), AccountTab(user: currentUser,)];}
+    
+    tabs = [HomeTab(geolocation: geolocation!, user: currentUser,), WishlistTab(user: currentUser,), MessagesTab(user: currentUser,), TripsTab(user: currentUser,), AccountTab(user: currentUser,)];
     return Scaffold(
       body: SafeArea(
         

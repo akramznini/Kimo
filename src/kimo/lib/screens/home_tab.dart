@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +11,9 @@ import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/utils/helper_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:kimo/classes/listing.dart';
+import 'package:geocoding/geocoding.dart';
+
 class HomeTab extends StatefulWidget {
   const HomeTab({
     super.key,
@@ -23,24 +28,78 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   
-  bool dataRetrieved = true;
-  late String imgUrl;
+  bool firstBatchRetrieved = false;
+  bool secondBatchRetrieved = false;
+  bool dataRetrieved = false;
   bool blurred = false;
   double blurRadius = 0;
   double searchBoxPosition = 0;
   double searchBoxOpacity = 0;
   double arrowBackLeftPosition = 80;
   DateTimeRange dateRange = DateTimeRange(start: DateTime.now(), end: DateTime.now());
+  List<Listing> nearbyListings = [];
+  List<Listing> topPicksListings = [];
   
-  
-  Future<void> loadImage() async {
-    try {
-      final storageReference = FirebaseStorage.instance.ref();
-      String imgUrl1 = await storageReference.child("car_pictures/car-volkswagen.jpg").getDownloadURL();
+  Future<void> loadListingsData() async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    
+    // loads cars that are nearest to current location
+    double perimeter = 1;
+    int n = 0;
+    double maxPerimeter = 16;
+    
+    widget.geolocation.then((position) async {
+      while (n < 3){
+        LatLngBounds bounds = calculateBounds(position.latitude, position.longitude, perimeter);
+        await db.collection("listings").where('position_latitude', isLessThanOrEqualTo: bounds.highLat).where('position_latitude', isGreaterThanOrEqualTo: bounds.lowLat).where('position_longitude', isLessThanOrEqualTo: bounds.highLong).where('position_longitude', isGreaterThanOrEqualTo: bounds.lowLong).limit(3).get().then((querySnapshot) {
+            n = querySnapshot.docs.length;
+            if (n == 3 || perimeter == maxPerimeter) {
+              for (var docSnapshot in querySnapshot.docs) {
+                print("adding is executed");
+                 nearbyListings.add(Listing.fromFirestore(docSnapshot));
+              }
+              setState(() {
+                firstBatchRetrieved = true;
+                dataRetrieved = firstBatchRetrieved && secondBatchRetrieved;
+              });
+            }
+        n = querySnapshot.docs.length;
+      });
+      perimeter *= 2; 
 
+      if (perimeter > maxPerimeter) {
+        break;
+      }
+    }
+      nearbyListings.sort((a, b) {
+        double distanceFromA = sqrt(pow((a.positionLongitude - position.longitude), 2) + pow((a.positionLatitude - position.latitude), 2));
+        double distanceFromB = sqrt(pow((b.positionLongitude - position.longitude), 2) + pow((b.positionLatitude - position.latitude), 2));
+        
+        return distanceFromA.compareTo(distanceFromB);
+        });
+      
+      
+      });
+
+    await db.collection("listings").orderBy("rating").limit(3).get().then((querySnapshot){
+        for (var docSnapshot in querySnapshot.docs){
+          topPicksListings.add(Listing.fromFirestore(docSnapshot));
+        }
+    });
+    
+    try {
+      
+      final storageReference = FirebaseStorage.instance.ref();
+
+      for (Listing listing in nearbyListings){
+          listing.pictureUrl = await storageReference.child(listing.picturePath).getDownloadURL();
+      }
+      for (Listing listing in topPicksListings){
+          listing.pictureUrl = await storageReference.child(listing.picturePath).getDownloadURL();
+      }
       setState(() {
-        imgUrl = imgUrl1;
-        dataRetrieved = true;
+        secondBatchRetrieved = true;
+        dataRetrieved = firstBatchRetrieved && secondBatchRetrieved;
       });
     } catch (e) {
       print('Error loading image: $e');
@@ -53,7 +112,7 @@ class _HomeTabState extends State<HomeTab> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadImage();
+    loadListingsData();
   }
   @override
   Widget build(BuildContext context) {
@@ -62,27 +121,47 @@ class _HomeTabState extends State<HomeTab> {
       pageContent = FutureBuilder<Position>(
         future: widget.geolocation,
         builder: (context, snapshot) {
+          double carPreviewHeight = 120;
+          double carPreviewWidth = 160;
           Widget carsNearYou;
+          Widget topPicks;
           if (snapshot.hasError){
-             carsNearYou = Text("Please enable location to see cars near by");
+             carsNearYou = Container(width: double.maxFinite, height: 200, child: Center(child: Text("Please enable location to see cars near by")));
           } else if (snapshot.hasData) {
+
+            // populate CARS NEAR YOU containers
+
+            List<CarPreviewContainer> carPreviewContainers = [];
+            for (var listing in nearbyListings) {
+              carPreviewContainers.add(CarPreviewContainer(imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
+            }
             carsNearYou = SizedBox(
                           height: 185,
                           width: double.infinity,
                           child: ListView(
                             scrollDirection: Axis.horizontal,
-                            children: [
-                              Text("device location is: ${snapshot.data!.longitude}, ${snapshot.data!.latitude}"),
-                              CarPreviewContainer(imageUrl: "https://hips.hearstapps.com/hmg-prod/images/2019-honda-civic-sedan-1558453497.jpg", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                              CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar-volkswagen.jpg?alt=media&token=7e2e6961-338b-4121-89a6-6e34c3e02032", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                              CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar-volkswagen.jpg?alt=media&token=7e2e6961-338b-4121-89a6-6e34c3e02032", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                            ],
+                            children: carPreviewContainers,
                           ),
                         );
           } else {
             return Center(child: Container(width: 50, height: 50 ,child: CircularProgressIndicator()));
           }
-          return Stack(
+
+          // populate TOP PICKS containers
+          List<CarPreviewContainer> carPreviewContainers = [];
+            for (var listing in topPicksListings) {
+              carPreviewContainers.add(CarPreviewContainer(imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
+            }
+            topPicks = SizedBox(
+                          height: 185,
+                          width: double.infinity,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: carPreviewContainers,
+                          ),
+                        );
+
+        return Stack(
         children: [Column(
           children: [
             Padding(
@@ -90,7 +169,7 @@ class _HomeTabState extends State<HomeTab> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset('assets/images/kimo-logo.png', width: 100, height: 50, fit: BoxFit.cover,),
+                  Image.asset('assets/images/kimo-logo.png', width: 150, height: 75, fit: BoxFit.cover,),
                   Row(
                     children: [
                       CustomButtonWhite(icon: Icon(Icons.search), onPressed: (){ setState(() {
@@ -131,18 +210,7 @@ class _HomeTabState extends State<HomeTab> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("TOP PICKS FOR  YOU", style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.w900),),
-                        SizedBox(
-                          height: 185,
-                          width: double.infinity,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar2.jpg?alt=media&token=aaef9981-1f94-4dc9-b735-c269fb20681a", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                              CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar-volkswagen.jpg?alt=media&token=7e2e6961-338b-4121-89a6-6e34c3e02032", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                              CarPreviewContainer(imageUrl: "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/car_pictures%2Fcar-volkswagen.jpg?alt=media&token=7e2e6961-338b-4121-89a6-6e34c3e02032", carName: "Vlokswagen Beetle ", nbReviews: 122, rating: 4.6, height: 120, width: 160,),
-                            ],
-                          ),
-                        ),
+                        topPicks
                       ],
                     ),
                   ),

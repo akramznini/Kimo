@@ -6,7 +6,8 @@ class CarPreviewContainer extends StatelessWidget {
   const CarPreviewContainer({
     super.key,
     required this.imageUrl,
-    required this.carName,
+    required this.brand,
+    required this.model,
     required this.nbReviews,
     required this.rating,
     required this.height,
@@ -14,7 +15,8 @@ class CarPreviewContainer extends StatelessWidget {
     });
 
   final String imageUrl;
-  final String carName;
+  final String brand;
+  final String model;
   final int nbReviews;
   final double rating;
   final double height;
@@ -33,7 +35,7 @@ class CarPreviewContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
               carImage,
-              CarInfoContainer(carName: carName, rating: rating, nbReviews: nbReviews,)
+              CarInfoContainer(brand: brand, model: model, rating: rating, nbReviews: nbReviews,)
             ],),
           ),
         ),
@@ -45,12 +47,14 @@ class CarPreviewContainer extends StatelessWidget {
 class CarInfoContainer extends StatelessWidget {
   const CarInfoContainer({
     super.key,
-    required this.carName,
+    required this.brand,
+    required this.model,
     required this.rating,
     required this.nbReviews
   });
 
-  final String carName;
+  final String brand;
+  final String model;
   final double rating;
   final int nbReviews;
   
@@ -63,7 +67,7 @@ class CarInfoContainer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(carName, style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),),
+          Text("${brand} ${model}", style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),),
           Row(
             children: [
               Text(rating.toString(), style: lightRoboto),

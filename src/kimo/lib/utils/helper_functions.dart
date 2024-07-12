@@ -1,37 +1,31 @@
 import 'dart:math';
-import 'package:geolocator/geolocator.dart';
 
 class LatLngBounds {
-  final double lowLang;
-  final double highLang;
+  final double lowLong;
+  final double highLong;
   final double lowLat;
   final double highLat;
 
-  LatLngBounds(this.lowLang, this.highLang, this.lowLat, this.highLat);
+  LatLngBounds(this.lowLong, this.highLong, this.lowLat, this.highLat);
 
   @override
   String toString() {
-    return 'LatLngBounds{lowLang: $lowLang, highLang: $highLang, lowLat: $lowLat, highLat: $highLat}';
+    return 'LatLngBounds{lowLang: $lowLong, highLang: $highLong, lowLat: $lowLat, highLat: $highLat}';
   }
 }
 
 LatLngBounds calculateBounds(double latitude, double longitude, double distanceInKm) {
-  // Radius of the Earth in km
-  const double R = 6371.0;
+  double kmPerLatDegree = 1000;
+  double kmPerLongDegree = kmPerLatDegree*cos(latitude);
+  
+  // Latitude bounds
+  double lowLat = latitude - distanceInKm/kmPerLatDegree;
+  double highLat = latitude + distanceInKm/kmPerLatDegree;
 
-  // Convert distance from km to radians
-  double distanceRadians = distanceInKm / R;
+  // Longitude bounds
+  double lowLong = longitude - distanceInKm/kmPerLongDegree;
+  double highLong = longitude + distanceInKm/kmPerLongDegree;
+  
 
-  // Convert latitude and longitude from degrees to radians
-  double latRadians = latitude * pi / 180.0;
-  double lonRadians = longitude * pi / 180.0;
-
-  // Calculate bounding box coordinates
-  double lowLang = longitude - (distanceRadians / cos(latRadians));
-  double highLang = longitude + (distanceRadians / cos(latRadians));
-  double lowLat = latitude - distanceRadians;
-  double highLat = latitude + distanceRadians;
-
-  return LatLngBounds(lowLang, highLang, lowLat, highLat);
+  return LatLngBounds(lowLong, highLong, lowLat, highLat);
 }
-
