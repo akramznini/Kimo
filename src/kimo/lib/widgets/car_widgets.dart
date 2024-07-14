@@ -1,19 +1,25 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kimo/classes/listing.dart';
+import 'package:kimo/screens/listing_details.dart';
+import 'package:kimo/utils/theme_values.dart';
 class CarPreviewContainer extends StatelessWidget {
   const CarPreviewContainer({
     super.key,
+    required this.onPressed,
     required this.imageUrl,
     required this.brand,
     required this.model,
     required this.nbReviews,
     required this.rating,
     required this.height,
-    required this.width
+    required this.width,
+    
     });
-
+  final VoidCallback onPressed;
   final String imageUrl;
   final String brand;
   final String model;
@@ -24,19 +30,22 @@ class CarPreviewContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Image carImage = Image.network(imageUrl, height: height, width: width, fit: BoxFit.cover,);
-    return IntrinsicWidth(
-      child: Padding(
-        padding: const EdgeInsets.only(right: 8.0, top: 8, bottom: 12),
-        child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Color.fromARGB(255, 213, 213, 213), width: 0.5), borderRadius: BorderRadius.circular(22)),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(22),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-              carImage,
-              CarInfoContainer(brand: brand, model: model, rating: rating, nbReviews: nbReviews,)
-            ],),
+    return GestureDetector(
+      onTap: onPressed,
+      child: IntrinsicWidth(
+        child: Padding(
+          padding: const EdgeInsets.only(right: 8.0, top: 8, bottom: 12),
+          child: Container(
+            decoration: BoxDecoration(border: Border.all(color: Color.fromARGB(255, 213, 213, 213), width: 0.5), borderRadius: BorderRadius.circular(22)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                carImage,
+                CarInfoContainer(brand: brand, model: model, rating: rating, nbReviews: nbReviews,)
+              ],),
+            ),
           ),
         ),
       ),
@@ -177,3 +186,61 @@ class TripInfoContainer extends StatelessWidget {
   }
 }
 
+
+class CarSpecs extends StatelessWidget {
+  const CarSpecs({
+    required this.transmission,
+    required this.nbSeats,
+    required this.fuel,
+    super.key,
+  });
+  final String transmission;
+  final int nbSeats;
+  final String fuel;
+  @override
+  Widget build(BuildContext context) {
+    Map<String, String> transmissions = {"M": "Manual", "A": "Automatic", "S":"Semi-automatic"};
+    Map<String, String> fuels = {"D": "Diesel", "G": "Gas", "E":"Electric", "H":"Hybrid"};
+    return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        width: 50,
+                        child: Column(
+                          children: [
+                            Text("Transmission", style: lightRobotoSmall,),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+                              child: SvgPicture.asset("assets/icons/transmission.svg", height: 20),
+                            ),
+                            Text("${transmissions[transmission]}", style: boldRobotoSmall,)
+                          ],),
+                      ),
+                     Container(
+                      width: 50,
+                       child: Column(
+                          children: [
+                            Text("Seats", style: lightRobotoSmall),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+                              child: SvgPicture.asset("assets/icons/seat.svg", height: 20),
+                            ),
+                            Text("${nbSeats}", style: boldRobotoSmall)
+                          ],),
+                     ),
+                     Container(
+                      width: 50,
+                       child: Column(
+                          children: [
+                            Text("Energy", style: lightRobotoSmall),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+                              child: SvgPicture.asset(fuel == "E" ? "assets/icons/energy-electric.svg" : "assets/icons/energy-fuel.svg", height: 20),
+                            ),
+                            Text("${fuels[fuel]}", style: boldRobotoSmall)
+                          ],),
+                     ),
+                    ],
+                   );
+  }
+}

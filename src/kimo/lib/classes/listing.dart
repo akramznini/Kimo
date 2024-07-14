@@ -28,7 +28,7 @@ class Listing {
     required this.rating,
     required this.startDate,
     required this.picturePath,
-    this.pictureUrl = ""
+    required this.pictureUrl
   });
 
   // Factory constructor to create a Car object from a Firestore DocumentSnapshot
@@ -47,7 +47,8 @@ class Listing {
       positionLongitude: data['position_longitude'] ?? 0.0,
       rating: (data['rating'] is num ? data['rating'].toDouble() : 0.0),
       startDate: data['start_date'] ?? Timestamp.now(),
-      picturePath: data['picture_path']
+      picturePath: data['picture_path'],
+      pictureUrl: data['picture_url']
     );
   }
 }

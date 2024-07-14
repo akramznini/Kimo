@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kimo/screens/listing_details.dart';
 import 'package:kimo/widgets/car_widgets.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/utils/helper_functions.dart';
@@ -36,28 +37,28 @@ class _HomeTabState extends State<HomeTab> {
   double searchBoxPosition = 0;
   double searchBoxOpacity = 0;
   double arrowBackLeftPosition = 80;
-  DateTimeRange dateRange = DateTimeRange(start: DateTime.now(), end: DateTime.now());
+  DateTimeRange dateRange = DateTimeRange(start: DateTime.now().add(Duration(days: 1)), end: DateTime.now().add(Duration(days: 2)));
   List<Listing> nearbyListings = [];
   List<Listing> topPicksListings = [];
   
   Future<void> loadListingsData() async {
     FirebaseFirestore db = FirebaseFirestore.instance;
-    
     // loads cars that are nearest to current location
     double perimeter = 1;
     int n = 0;
     double maxPerimeter = 16;
-    
+    List<Future<void>> futures = [];
+
     widget.geolocation.then((position) async {
       while (n < 3){
         LatLngBounds bounds = calculateBounds(position.latitude, position.longitude, perimeter);
-        await db.collection("listings").where('position_latitude', isLessThanOrEqualTo: bounds.highLat).where('position_latitude', isGreaterThanOrEqualTo: bounds.lowLat).where('position_longitude', isLessThanOrEqualTo: bounds.highLong).where('position_longitude', isGreaterThanOrEqualTo: bounds.lowLong).limit(3).get().then((querySnapshot) {
+        await db.collection("listings").where("start_date", isLessThanOrEqualTo: Timestamp.fromDate(dateRange.start)).where("end_date", isGreaterThanOrEqualTo: Timestamp.fromDate(dateRange.end)).where('position_latitude', isLessThanOrEqualTo: bounds.highLat).where('position_latitude', isGreaterThanOrEqualTo: bounds.lowLat).where('position_longitude', isLessThanOrEqualTo: bounds.highLong).where('position_longitude', isGreaterThanOrEqualTo: bounds.lowLong).limit(3).get().then((querySnapshot) async {
             n = querySnapshot.docs.length;
             if (n == 3 || perimeter == maxPerimeter) {
               for (var docSnapshot in querySnapshot.docs) {
-                print("adding is executed");
                  nearbyListings.add(Listing.fromFirestore(docSnapshot));
               }
+              
               setState(() {
                 firstBatchRetrieved = true;
                 dataRetrieved = firstBatchRetrieved && secondBatchRetrieved;
@@ -81,7 +82,7 @@ class _HomeTabState extends State<HomeTab> {
       
       });
 
-    await db.collection("listings").orderBy("rating").limit(3).get().then((querySnapshot){
+    await db.collection("listings").where("start_date", isLessThanOrEqualTo: Timestamp.fromDate(dateRange.start)).where("end_date", isGreaterThanOrEqualTo: Timestamp.fromDate(dateRange.end)).orderBy("rating", descending: true).limit(3).get().then((querySnapshot){
         for (var docSnapshot in querySnapshot.docs){
           topPicksListings.add(Listing.fromFirestore(docSnapshot));
         }
@@ -90,17 +91,26 @@ class _HomeTabState extends State<HomeTab> {
     try {
       
       final storageReference = FirebaseStorage.instance.ref();
+      
 
-      for (Listing listing in nearbyListings){
-          listing.pictureUrl = await storageReference.child(listing.picturePath).getDownloadURL();
-      }
-      for (Listing listing in topPicksListings){
-          listing.pictureUrl = await storageReference.child(listing.picturePath).getDownloadURL();
-      }
-      setState(() {
-        secondBatchRetrieved = true;
-        dataRetrieved = firstBatchRetrieved && secondBatchRetrieved;
-      });
+// First loop for nearbyListings
+
+// Second loop for topPicksListings
+for (Listing listing in topPicksListings) {
+  futures.add(
+    storageReference.child(listing.picturePath).getDownloadURL().then((url) {
+    }),
+  );
+}
+
+// Wait for all futures to complete
+await Future.wait(futures).then((snapshot){setState(() {
+  secondBatchRetrieved = true;
+  dataRetrieved = firstBatchRetrieved && secondBatchRetrieved;
+});});
+
+// After both loops complete
+
     } catch (e) {
       print('Error loading image: $e');
       // Handle error gracefully, e.g., show a placeholder image or error message
@@ -114,10 +124,15 @@ class _HomeTabState extends State<HomeTab> {
     super.initState();
     loadListingsData();
   }
+
+
+
   @override
   Widget build(BuildContext context) {
     Widget pageContent;
+    print(dataRetrieved);
     if (dataRetrieved) {
+      print("inside future");
       pageContent = FutureBuilder<Position>(
         future: widget.geolocation,
         builder: (context, snapshot) {
@@ -133,7 +148,9 @@ class _HomeTabState extends State<HomeTab> {
 
             List<CarPreviewContainer> carPreviewContainers = [];
             for (var listing in nearbyListings) {
-              carPreviewContainers.add(CarPreviewContainer(imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
+              print("url = ${listing.pictureUrl}");
+              // TODO: duplicate attributes with listing
+              carPreviewContainers.add(CarPreviewContainer(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context){return ListingDetails(dateTimeRange: dateRange, carDocPath: listing.carId,);}));}, imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
             }
             carsNearYou = SizedBox(
                           height: 185,
@@ -150,7 +167,7 @@ class _HomeTabState extends State<HomeTab> {
           // populate TOP PICKS containers
           List<CarPreviewContainer> carPreviewContainers = [];
             for (var listing in topPicksListings) {
-              carPreviewContainers.add(CarPreviewContainer(imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
+              carPreviewContainers.add(CarPreviewContainer(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context){return ListingDetails(dateTimeRange: dateRange, carDocPath: listing.carId,);}));}, imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
             }
             topPicks = SizedBox(
                           height: 185,
@@ -172,7 +189,7 @@ class _HomeTabState extends State<HomeTab> {
                   Image.asset('assets/images/kimo-logo.png', width: 150, height: 75, fit: BoxFit.cover,),
                   Row(
                     children: [
-                      CustomButtonWhite(icon: Icon(Icons.search), onPressed: (){ setState(() {
+                      CustomButtonWhite(iconSize: 24, icon: Icon(Icons.search), onPressed: (){ setState(() {
                         blurred = true;
                         blurRadius = 10;
                       });
@@ -184,7 +201,7 @@ class _HomeTabState extends State<HomeTab> {
                       });});
                       
                       },),
-                      CustomButtonWhite(icon: Icon(Icons.notifications_none), onPressed: (){})
+                      CustomButtonWhite(iconSize: 24, icon: Icon(Icons.notifications_none), onPressed: (){})
                     ],
                   ),
                 ],
@@ -270,7 +287,7 @@ class _HomeTabState extends State<HomeTab> {
         blurred ?  AnimatedPositioned(
           duration: Durations.long2,
           curve: Curves.easeInOut,
-          child: AnimatedOpacity(duration: Durations.long2, opacity: searchBoxOpacity, child: CustomButtonWhite(icon: Icon(Icons.arrow_back), onPressed: (){
+          child: AnimatedOpacity(duration: Durations.long2, opacity: searchBoxOpacity, child: CustomButtonWhite(iconSize: 24, icon: Icon(Icons.arrow_back), onPressed: (){
             setState(() {
             arrowBackLeftPosition = 80;
             searchBoxOpacity = 0;
@@ -309,7 +326,9 @@ class CustomButtonWhite extends StatelessWidget {
     super.key,
     required this.icon,
     required this.onPressed,
+    required this.iconSize
   });
+  final double iconSize;
   final Icon icon;
   final VoidCallback onPressed;
   @override
@@ -321,7 +340,7 @@ class CustomButtonWhite extends StatelessWidget {
         child: IconButton(
         onPressed: onPressed,
         icon: icon,
-        iconSize: 24,
+        iconSize: iconSize,
         color: Colors.black, // Icon color
         splashRadius: 24, // Increase the splash radius to make the button easier to tap 
         padding: EdgeInsets.all(10), // Remove default padding
