@@ -34,5 +34,6 @@ String dateTimeToString(DateTime dateTime){
   List<String> weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   List<String> months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   print(dateTime.weekday);
-  return "${weekdays[dateTime.weekday - 1]}, ${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.hour >= 13 ? "${dateTime.hour - 12}:${dateTime.minute} PM" : "${dateTime.hour}:${dateTime.minute} AM"}";
+  // return "${weekdays[dateTime.weekday - 1]}, ${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.hour >= 13 ? "${dateTime.hour - 12}:${dateTime.minute} PM" : "${dateTime.hour}:${dateTime.minute} AM"}";
+  return "${weekdays[dateTime.weekday - 1]}, ${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.year}";
 }

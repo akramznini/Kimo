@@ -13,8 +13,9 @@ class Car {
   double rating;
   String transmission;
   int year;
-
+  final Address address;
   Car({
+    required this.address,
     required this.brand,
     required this.dailyRate,
     required this.fuel,
@@ -33,6 +34,7 @@ class Car {
   factory Car.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data() as Map;
     return Car(
+      address: Address.fromMap(data['address']),
       brand: data['brand'] ?? '',
       dailyRate: data['daily_rate'] ?? 0,
       fuel: data['fuel'] ?? '',
@@ -51,6 +53,7 @@ class Car {
   // Method to convert Car instance to a map for Firestore
   Map<String, dynamic> toMap() {
     return {
+      'address': address.toMap(),
       'brand': brand,
       'daily_rate': dailyRate,
       'fuel': fuel,
@@ -63,6 +66,37 @@ class Car {
       'rating': rating,
       'transmission': transmission,
       'year': year,
+    };
+  }
+  
+}
+class Address {
+  final String city;
+  final String postalCode;
+  final String province;
+  final String streetNumber;
+
+  Address({
+    required this.city,
+    required this.postalCode,
+    required this.province,
+    required this.streetNumber,
+  });
+
+  factory Address.fromMap(Map<String, dynamic> map) {
+    return Address(
+      city: map['city'],
+      postalCode: map['postal_code'],
+      province: map['province'],
+      streetNumber: map['street_number'],
+    );
+  }
+  Map<String, dynamic> toMap() {
+    return {
+      'city': city,
+      'postal_code': postalCode,
+      'province': province,
+      'street_number': streetNumber,
     };
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kimo/widgets/widgets.dart';
 
 class MessagesTab extends StatelessWidget {
   const MessagesTab({
@@ -16,10 +17,7 @@ class MessagesTab extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 16, bottom: 8),
-          child: Text("Messages", style: GoogleFonts.roboto(color: Colors.black, fontSize:  16, fontWeight: FontWeight.bold)),
-        ),
+        TabTitle(title: "Messages"),
         Expanded(
           child: ListView(
             children: [

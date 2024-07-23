@@ -1,7 +1,9 @@
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/classes/car.dart';
 import 'package:kimo/classes/listing.dart';
@@ -11,6 +13,7 @@ import 'package:kimo/utils/helper_functions.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/widgets/buttons.dart';
 import 'package:kimo/widgets/car_widgets.dart';
+import 'package:kimo/widgets/widgets.dart';
 
 class ListingDetails extends StatefulWidget {
   const ListingDetails({
@@ -31,12 +34,24 @@ class _ListingDetailsState extends State<ListingDetails> {
     FirebaseFirestore db = FirebaseFirestore.instance;
     Car ?car;
     ListingOwner ?listingOwner;
+    List<Placemark> ?placemarks;
+    User? currentUser;
     Future<void> fetchData() async {
+      FirebaseAuth.instance
+    .authStateChanges()
+    .listen((User? user) {
+    currentUser = user;
+    if (user == null) {
+    } else {
+      
+    }
+    });
       try {
         DocumentSnapshot carDocResponse = await db.doc(widget.carDocPath).get();
         if (carDocResponse.exists){
           car = Car.fromFirestore(carDocResponse);
           DocumentSnapshot listingOwnerDoc = await db.collection("users").doc(car!.ownerDocId).get();
+          
           listingOwner = ListingOwner.fromFirestore(listingOwnerDoc);
         }
         }
@@ -45,6 +60,15 @@ class _ListingDetailsState extends State<ListingDetails> {
       }
 
     }
+
+    /*Future<void> getAddressfromLocation(double latitude, double longitude) async {
+        try {
+            placemarks = await placemarkFromCoordinates(car!.location.latitude, car!.location.longitude);
+        }
+        catch (e){
+          return Future.error("couldn't get Address");
+        }
+    }*/
     
     //Future<DocumentSnapshot<Map<String, dynamic>>> future = db.doc(carDocPath).get();
 
@@ -88,7 +112,7 @@ class _ListingDetailsState extends State<ListingDetails> {
                                    Text("(${car!.nbReviews.toString()} reviews)", style: lightRoboto,)
                                  ],
                                ),
-                      Text("${car!.dailyRate} MAD / Day", style: lightRoboto,),
+                      Text("${car!.dailyRate} \$ / Day", style: lightRoboto,),
                       
                    ],
                  ),
@@ -150,18 +174,73 @@ class _ListingDetailsState extends State<ListingDetails> {
                  padding: const EdgeInsets.only(left: 16, right: 16),
                  child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
                ),
-               CarSpecs(transmission: car!.transmission, nbSeats: car!.nbSeats, fuel: car!.fuel)
+               CarSpecs(transmission: car!.transmission, nbSeats: car!.nbSeats, fuel: car!.fuel),
+               Padding(
+                 padding: const EdgeInsets.only(left: 16, right: 16),
+                 child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
+               ),
+               Padding(
+                 padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8),
+                 child: Row(
+                  
+                  children: [
+                  Icon(Icons.location_on_outlined, size: 24,),
+                  SizedBox(width: 12,),
+                  Text("${car!.address.streetNumber}, ${car!.address.city}", style: lightRoboto,)
+                 ],),
+                 
+               ),
+               Padding(
+                 padding: const EdgeInsets.only(left: 16, right: 16),
+                 child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
+               ),
+              SizedBox(height: 50,),
             ],),
             Positioned(
               top: 10,
               left: 10,
               child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},)),
-              Positioned(top: 16, right: 16, child: FavoriteToggleButton(isFavorite: false, carDocPath: widget.carDocPath,))
+              Positioned(top: 16, right: 16, child: FavoriteToggleButton(isFavorite: false, size: 20,)),
+              Positioned(
+                bottom: 0,
+
+                child:  Container(
+                  color: Colors.white,
+                  width: MediaQuery.of(context).size.width,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("${car!.dailyRate} \$ / Day", style: boldRoboto,),
+                            Row(
+                              children: [
+                                Text(car!.rating.toString(), style: lightRoboto),
+                                           Padding(
+                                                      padding: const EdgeInsets.only(left: 2, right: 2),
+                                                      child: Icon(Icons.star, color: onPrimary, size: 12),
+                                           ),
+                              ],
+                            ),
+                    
+                        ],),
+                        ElevatedButton(onPressed: (){
+                        }, child: Padding(
+                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                                        child: Text("Reserve", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),),
+                                      ), style: ElevatedButton.styleFrom(backgroundColor: onPrimary),),
+                      ],
+                    ),
+                  ),
+                ))
           ],),
         ); 
       }
       else {
-        return Center(child: Container(width: 50, height: 50 ,child: CircularProgressIndicator()));
+        return const CenteredCircularProgressIndicator();
       }
     });
   }

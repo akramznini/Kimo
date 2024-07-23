@@ -6,6 +6,51 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/classes/listing.dart';
 import 'package:kimo/screens/listing_details.dart';
 import 'package:kimo/utils/theme_values.dart';
+import 'package:kimo/widgets/buttons.dart';
+
+
+
+class WishlistCarPreviewContainer extends StatelessWidget {
+  const WishlistCarPreviewContainer({
+    super.key,
+    required this.onPressed,
+    required this.onFavoritePressed,
+    required this.imageUrl,
+    required this.brand,
+    required this.model,
+    required this.nbReviews,
+    required this.rating,
+    required this.height,
+    required this.width,
+    
+    });
+  final VoidCallback onPressed;
+  final VoidCallback onFavoritePressed;
+  final String imageUrl;
+  final String brand;
+  final String model;
+  final int nbReviews;
+  final double rating;
+  final double height;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        CarPreviewContainer(onPressed: onPressed, imageUrl: imageUrl, brand: brand, model: model, nbReviews: nbReviews, rating: rating, height: height, width: width),
+        Positioned(
+          top: 15,
+          left: width - 35,
+          child: FavoriteToggleButton(isFavorite: true, size: 15,))
+      ],
+    );
+  }
+}
+
+
+
+
 class CarPreviewContainer extends StatelessWidget {
   const CarPreviewContainer({
     super.key,
@@ -38,7 +83,7 @@ class CarPreviewContainer extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(border: Border.all(color: Color.fromARGB(255, 213, 213, 213), width: 0.5), borderRadius: BorderRadius.circular(22)),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(22),
+              borderRadius: BorderRadius.circular(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

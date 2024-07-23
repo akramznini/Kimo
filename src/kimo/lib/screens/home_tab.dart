@@ -14,6 +14,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kimo/classes/listing.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:kimo/widgets/widgets.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({
@@ -52,7 +53,13 @@ class _HomeTabState extends State<HomeTab> {
     widget.geolocation.then((position) async {
       while (n < 3){
         LatLngBounds bounds = calculateBounds(position.latitude, position.longitude, perimeter);
-        await db.collection("listings").where("start_date", isLessThanOrEqualTo: Timestamp.fromDate(dateRange.start)).where("end_date", isGreaterThanOrEqualTo: Timestamp.fromDate(dateRange.end)).where('position_latitude', isLessThanOrEqualTo: bounds.highLat).where('position_latitude', isGreaterThanOrEqualTo: bounds.lowLat).where('position_longitude', isLessThanOrEqualTo: bounds.highLong).where('position_longitude', isGreaterThanOrEqualTo: bounds.lowLong).limit(3).get().then((querySnapshot) async {
+        await db.collection("listings").where("start_date", isLessThanOrEqualTo: Timestamp.fromDate(dateRange.start))
+        .where("end_date", isGreaterThanOrEqualTo: Timestamp.fromDate(dateRange.end))
+        .where('position_latitude', isLessThanOrEqualTo: bounds.highLat)
+        .where('position_latitude', isGreaterThanOrEqualTo: bounds.lowLat)
+        .where('position_longitude', isLessThanOrEqualTo: bounds.highLong)
+        .where('position_longitude', isGreaterThanOrEqualTo: bounds.lowLong)
+        .limit(3).get().then((querySnapshot) async {
             n = querySnapshot.docs.length;
             if (n == 3 || perimeter == maxPerimeter) {
               for (var docSnapshot in querySnapshot.docs) {
@@ -82,7 +89,9 @@ class _HomeTabState extends State<HomeTab> {
       
       });
 
-    await db.collection("listings").where("start_date", isLessThanOrEqualTo: Timestamp.fromDate(dateRange.start)).where("end_date", isGreaterThanOrEqualTo: Timestamp.fromDate(dateRange.end)).orderBy("rating", descending: true).limit(3).get().then((querySnapshot){
+    await db.collection("listings").where("start_date", isLessThanOrEqualTo: Timestamp.fromDate(dateRange.start))
+    .where("end_date", isGreaterThanOrEqualTo: Timestamp.fromDate(dateRange.end))
+    .orderBy("rating", descending: true).limit(3).get().then((querySnapshot){
         for (var docSnapshot in querySnapshot.docs){
           topPicksListings.add(Listing.fromFirestore(docSnapshot));
         }
@@ -161,7 +170,7 @@ await Future.wait(futures).then((snapshot){setState(() {
                           ),
                         );
           } else {
-            return Center(child: Container(width: 50, height: 50 ,child: CircularProgressIndicator()));
+            return const CenteredCircularProgressIndicator();
           }
 
           // populate TOP PICKS containers
@@ -311,7 +320,7 @@ await Future.wait(futures).then((snapshot){setState(() {
       );
     }
     else {
-      pageContent = Center(child: Container(width: 50, height: 50 ,child: CircularProgressIndicator()));
+      pageContent = const CenteredCircularProgressIndicator();
     }
     
 
