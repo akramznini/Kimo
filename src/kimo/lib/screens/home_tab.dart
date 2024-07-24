@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/screens/listing_details.dart';
+import 'package:kimo/widgets/buttons.dart';
 import 'package:kimo/widgets/car_widgets.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/utils/helper_functions.dart';
@@ -41,6 +42,7 @@ class _HomeTabState extends State<HomeTab> {
   DateTimeRange dateRange = DateTimeRange(start: DateTime.now().add(Duration(days: 1)), end: DateTime.now().add(Duration(days: 2)));
   List<Listing> nearbyListings = [];
   List<Listing> topPicksListings = [];
+  List wishlist = [];
   
   Future<void> loadListingsData() async {
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -49,8 +51,14 @@ class _HomeTabState extends State<HomeTab> {
     int n = 0;
     double maxPerimeter = 16;
     List<Future<void>> futures = [];
-
+    if (widget.user != null) {
+        var userDoc = await db.collection("users").where("UID", isEqualTo: widget.user!.uid).get();
+        wishlist = userDoc.docs.first.data()["wishlist"] as List;
+      }
     widget.geolocation.then((position) async {
+      
+
+
       while (n < 3){
         LatLngBounds bounds = calculateBounds(position.latitude, position.longitude, perimeter);
         await db.collection("listings").where("start_date", isLessThanOrEqualTo: Timestamp.fromDate(dateRange.start))
@@ -63,7 +71,8 @@ class _HomeTabState extends State<HomeTab> {
             n = querySnapshot.docs.length;
             if (n == 3 || perimeter == maxPerimeter) {
               for (var docSnapshot in querySnapshot.docs) {
-                 nearbyListings.add(Listing.fromFirestore(docSnapshot));
+                Listing listing = Listing.fromFirestore(docSnapshot);
+                 nearbyListings.add(listing);
               }
               
               setState(() {
@@ -93,7 +102,8 @@ class _HomeTabState extends State<HomeTab> {
     .where("end_date", isGreaterThanOrEqualTo: Timestamp.fromDate(dateRange.end))
     .orderBy("rating", descending: true).limit(3).get().then((querySnapshot){
         for (var docSnapshot in querySnapshot.docs){
-          topPicksListings.add(Listing.fromFirestore(docSnapshot));
+          Listing listing = Listing.fromFirestore(docSnapshot);
+          topPicksListings.add(listing);
         }
     });
     
@@ -157,9 +167,9 @@ await Future.wait(futures).then((snapshot){setState(() {
 
             List<CarPreviewContainer> carPreviewContainers = [];
             for (var listing in nearbyListings) {
-              print("url = ${listing.pictureUrl}");
+              
               // TODO: duplicate attributes with listing
-              carPreviewContainers.add(CarPreviewContainer(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context){return ListingDetails(dateTimeRange: dateRange, carDocPath: listing.carId,);}));}, imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
+              carPreviewContainers.add(CarPreviewContainer(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context){return ListingDetails(dateTimeRange: dateRange, carDocPath: listing.carId);}));}, imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
             }
             carsNearYou = SizedBox(
                           height: 185,
@@ -176,7 +186,8 @@ await Future.wait(futures).then((snapshot){setState(() {
           // populate TOP PICKS containers
           List<CarPreviewContainer> carPreviewContainers = [];
             for (var listing in topPicksListings) {
-              carPreviewContainers.add(CarPreviewContainer(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context){return ListingDetails(dateTimeRange: dateRange, carDocPath: listing.carId,);}));}, imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
+              
+              carPreviewContainers.add(CarPreviewContainer(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context){return ListingDetails(dateTimeRange: dateRange, carDocPath: listing.carId);}));}, imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: carPreviewHeight, width: carPreviewWidth));
             }
             topPicks = SizedBox(
                           height: 185,
@@ -330,34 +341,6 @@ await Future.wait(futures).then((snapshot){setState(() {
   
 }
 
-class CustomButtonWhite extends StatelessWidget {
-  const CustomButtonWhite({
-    super.key,
-    required this.icon,
-    required this.onPressed,
-    required this.iconSize
-  });
-  final double iconSize;
-  final Icon icon;
-  final VoidCallback onPressed;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 12),
-      child: Container(
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30), border: Border.all(color: greySelected, width: 0.5)),
-        child: IconButton(
-        onPressed: onPressed,
-        icon: icon,
-        iconSize: iconSize,
-        color: Colors.black, // Icon color
-        splashRadius: 24, // Increase the splash radius to make the button easier to tap 
-        padding: EdgeInsets.all(10), // Remove default padding
-              ),
-      ),
-    );
-  }
-}
 
 
 

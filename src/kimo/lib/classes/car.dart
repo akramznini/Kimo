@@ -14,6 +14,7 @@ class Car {
   String transmission;
   int year;
   final Address address;
+  final String docPath;
   Car({
     required this.address,
     required this.brand,
@@ -28,6 +29,7 @@ class Car {
     required this.rating,
     required this.transmission,
     required this.year,
+    required this.docPath,
   });
 
   // Factory method to create a Car instance from Firestore document
@@ -47,6 +49,7 @@ class Car {
       rating: data['rating'] ?? 0.0,
       transmission: data['transmission'] ?? '',
       year: data['year'] ?? 0,
+      docPath: "cars/${doc.id}"
     );
   }
 

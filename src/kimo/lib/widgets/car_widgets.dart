@@ -22,7 +22,7 @@ class WishlistCarPreviewContainer extends StatelessWidget {
     required this.rating,
     required this.height,
     required this.width,
-    
+    required this.id
     });
   final VoidCallback onPressed;
   final VoidCallback onFavoritePressed;
@@ -33,7 +33,7 @@ class WishlistCarPreviewContainer extends StatelessWidget {
   final double rating;
   final double height;
   final double width;
-
+  final int id;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -42,7 +42,7 @@ class WishlistCarPreviewContainer extends StatelessWidget {
         Positioned(
           top: 15,
           left: width - 35,
-          child: FavoriteToggleButton(isFavorite: true, size: 15,))
+          child: FavoriteToggleButton(isFavorite: true, size: 15, toggleFavoriteCallback: onFavoritePressed,))
       ],
     );
   }

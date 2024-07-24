@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:another_carousel_pro/another_carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,37 +18,65 @@ import 'package:kimo/widgets/car_widgets.dart';
 import 'package:kimo/widgets/widgets.dart';
 
 class ListingDetails extends StatefulWidget {
-  const ListingDetails({
+  ListingDetails({
     super.key,
     required this.carDocPath,
-    required this.dateTimeRange
+    this.dateTimeRange
   });
-  final DateTimeRange dateTimeRange;
+  DateTimeRange? dateTimeRange;
   final String carDocPath;
-
+  late bool isFavorite;
   @override
   State<ListingDetails> createState() => _ListingDetailsState();
+
 }
 
+
 class _ListingDetailsState extends State<ListingDetails> {
+  User? currentUser;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
+  
+
   @override
   Widget build(BuildContext context) {
     FirebaseFirestore db = FirebaseFirestore.instance;
     Car ?car;
     ListingOwner ?listingOwner;
     List<Placemark> ?placemarks;
-    User? currentUser;
+    
     Future<void> fetchData() async {
-      FirebaseAuth.instance
+    FirebaseAuth.instance
     .authStateChanges()
-    .listen((User? user) {
+    .listen((User? user) async {
     currentUser = user;
     if (user == null) {
+      widget.isFavorite = false;
+      // handle user null
     } else {
-      
+      // handle user not null
+      var userDoc = await db.collection("users").where("UID", isEqualTo: currentUser!.uid).get();
+      var wishlist = userDoc.docs.first.data()["wishlist"] as List;
+      widget.isFavorite = wishlist.contains(widget.carDocPath);
     }
     });
       try {
+        if (widget.dateTimeRange == null) {
+
+        final listingDocsResponse = await db.collection("listings").where("car", isEqualTo: widget.carDocPath)
+        .where("end_date", isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime.now().add(Duration(days: 2)))).orderBy("start_date").limit(1).get();
+        if (!listingDocsResponse.docs.isEmpty) {
+          final listing = Listing.fromFirestore(listingDocsResponse.docs.first);
+          var startDateMilliSecondsEpoch = max(listing.startDate.millisecondsSinceEpoch, Timestamp.now().millisecondsSinceEpoch);
+          widget.dateTimeRange = DateTimeRange(start: DateTime.fromMillisecondsSinceEpoch(startDateMilliSecondsEpoch).add(Duration(days: 1)), end: DateTime.fromMillisecondsSinceEpoch(startDateMilliSecondsEpoch).add(Duration(days: 2)));
+        }
+        }
         DocumentSnapshot carDocResponse = await db.doc(widget.carDocPath).get();
         if (carDocResponse.exists){
           car = Car.fromFirestore(carDocResponse);
@@ -56,7 +86,7 @@ class _ListingDetailsState extends State<ListingDetails> {
         }
         }
       catch (e) {
-        return Future.error("couldn't fetch data");
+        return Future.error(e.toString());
       }
 
     }
@@ -75,9 +105,16 @@ class _ListingDetailsState extends State<ListingDetails> {
 
     return FutureBuilder(future: fetchData(), builder: (context, snapshot){
       if (snapshot.hasError){
-        return Center(child: Text("An error occured while loading the page"));
+        print(snapshot.error);
+        return Stack(children: [
+          Center(child: Text("There was a problem loading data. ")),
+          Positioned(
+              top: 10,
+              left: 10,
+              child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},)),]);
       }
-      else if (car != null){
+      else if (snapshot.connectionState == ConnectionState.done){
+        if (car != null && widget.dateTimeRange != null){
         return Container(
           color: Colors.white,
           child: Stack(children: [
@@ -162,8 +199,8 @@ class _ListingDetailsState extends State<ListingDetails> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                  Text(dateTimeToString(widget.dateTimeRange.start), style: lightRoboto,),
-                                  Text(dateTimeToString(widget.dateTimeRange.end), style: lightRoboto,)
+                                  Text(dateTimeToString(widget.dateTimeRange!.start), style: lightRoboto,),
+                                  Text(dateTimeToString(widget.dateTimeRange!.end), style: lightRoboto,)
                                 ],),
                                 GestureDetector(
                                       onTap: (){},
@@ -199,8 +236,12 @@ class _ListingDetailsState extends State<ListingDetails> {
             Positioned(
               top: 10,
               left: 10,
-              child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},)),
-              Positioned(top: 16, right: 16, child: FavoriteToggleButton(isFavorite: false, size: 20,)),
+              child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){print("buttonPressed");Navigator.pop(context);},)),
+              Positioned(top: 16, right: 16, child: FavoriteToggleButton(isFavorite: widget.isFavorite, size: 20, toggleFavoriteCallback: () async {
+                print("buttonPressed");
+                toggleFavoritesCallback(currentUser, car!.docPath, widget.isFavorite);
+                widget.isFavorite = !widget.isFavorite;
+              },)),
               Positioned(
                 bottom: 0,
 
@@ -238,6 +279,15 @@ class _ListingDetailsState extends State<ListingDetails> {
                 ))
           ],),
         ); 
+      }
+      else {
+        return Stack(children: [
+          Center(child: Text("this car is not currently available")),
+          Positioned(
+              top: 10,
+              left: 10,
+              child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},)),]);
+      }
       }
       else {
         return const CenteredCircularProgressIndicator();

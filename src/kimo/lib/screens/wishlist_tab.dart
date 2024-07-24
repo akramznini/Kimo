@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kimo/classes/car.dart';
+import 'package:kimo/screens/listing_details.dart';
+import 'package:kimo/widgets/buttons.dart';
 import 'package:kimo/widgets/car_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/utils/theme_values.dart';
@@ -22,19 +24,20 @@ class WishlistTab extends StatefulWidget {
 
 class _WishlistTabState extends State<WishlistTab> {
 
-  late Future<List<Car>> cars;
+  late Future<List<Car>> fetchCars;
 
   Future<List<Car>> fetchFavoriteCars() async {
     if (widget.user != null){
     try {
     var db = FirebaseFirestore.instance;
-    var doc = await db.collection("users").where("UID", isEqualTo: widget.user!.uid).get();
-    var wishlist = doc.docs.first.data()["wishlist"] as List;
+    var userDoc = await db.collection("users").where("UID", isEqualTo: widget.user!.uid).get();
+    var wishlist = userDoc.docs.first.data()["wishlist"] as List;
     print(wishlist.toString());
     List<Car> cars = [];
     for (var carDocPath in wishlist){
       print(carDocPath);
-      cars.add(Car.fromFirestore(await db.collection("cars").doc(carDocPath).get()));
+      Car car = Car.fromFirestore(await db.doc(carDocPath).get());
+      cars.add(car);
     }
     return cars;
     }
@@ -50,17 +53,26 @@ class _WishlistTabState extends State<WishlistTab> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    cars = fetchFavoriteCars();
+    fetchCars = fetchFavoriteCars();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Car>>(future: cars, builder: (context, snapshot){
+    return FutureBuilder<List<Car>>(future: fetchCars, builder: (context, snapshot){
       
       if (snapshot.hasData){
         List<Widget> carWidgets = [];
         for (var car in snapshot.data!){
-          carWidgets.add(Center(child: WishlistCarPreviewContainer(onPressed: (){}, onFavoritePressed: (){}, imageUrl: car.pictures[0], brand: car.brand, model: car.model, nbReviews: car.nbReviews, rating: car.rating, height: 120, width: min(MediaQuery.of(context).size.width -50, 300))));
+          carWidgets.add(Center(
+            child: WishlistCarPreviewContainer(id: 1, onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context){return ListingDetails(carDocPath: car.docPath,);})).then((value) {setState(() {
+              fetchCars = fetchFavoriteCars();
+            });});}, onFavoritePressed: () async {
+              await toggleFavoritesCallback(widget.user, car.docPath, true);
+              setState(() {
+                fetchCars = fetchFavoriteCars();
+              });
+              }, imageUrl: car.pictures[0], brand: car.brand, model: car.model, nbReviews: car.nbReviews, rating: car.rating, height: 120, width: min(MediaQuery.of(context).size.width -50, 300)),
+          ));
       }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
