@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kimo/classes/address.dart';
 import 'package:kimo/classes/listing.dart';
 import 'package:kimo/screens/listing_details.dart';
 import 'package:kimo/utils/theme_values.dart';
@@ -98,6 +99,54 @@ class CarPreviewContainer extends StatelessWidget {
   }
 }
 
+class CarPreviewContainerWithPrice extends StatelessWidget {
+  const CarPreviewContainerWithPrice({
+    super.key,
+    required this.onPressed,
+    required this.imageUrl,
+    required this.brand,
+    required this.model,
+    required this.nbReviews,
+    required this.rating,
+    required this.height,
+    required this.width,
+    required this.dailyRate
+    });
+  final VoidCallback onPressed;
+  final String imageUrl;
+  final String brand;
+  final String model;
+  final int nbReviews;
+  final double rating;
+  final double height;
+  final double width;
+  final int dailyRate;
+  @override
+  Widget build(BuildContext context) {
+    Image carImage = Image.network(imageUrl, height: height, width: width, fit: BoxFit.cover,);
+    return GestureDetector(
+      onTap: onPressed,
+      child: IntrinsicWidth(
+        child: Padding(
+          padding: const EdgeInsets.only(right: 8.0, top: 8, bottom: 12),
+          child: Container(
+            decoration: BoxDecoration(border: Border.all(color: Color.fromARGB(255, 213, 213, 213), width: 0.5), borderRadius: BorderRadius.circular(22)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                carImage,
+                CarInfoContainerWithPrice(brand: brand, model: model, rating: rating, nbReviews: nbReviews, dailyRate: dailyRate,)
+              ],),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class CarInfoContainer extends StatelessWidget {
   const CarInfoContainer({
     super.key,
@@ -138,30 +187,82 @@ class CarInfoContainer extends StatelessWidget {
   }
 }
 
+class CarInfoContainerWithPrice extends StatelessWidget {
+  const CarInfoContainerWithPrice({
+    super.key,
+    required this.brand,
+    required this.model,
+    required this.rating,
+    required this.nbReviews,
+    required this.dailyRate
+  });
+
+  final String brand;
+  final String model;
+  final double rating;
+  final int nbReviews;
+  final int dailyRate;
+  @override
+  Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    TextStyle lightRoboto = GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w300, color: Color.fromARGB(255, 84, 84, 84));
+    return Padding(
+      padding: const EdgeInsets.only(top:4, bottom:4, left: 8, right: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("${brand} ${model}", style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),),
+          Padding(
+            padding: const EdgeInsets.only( right: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(rating.toString(), style: lightRoboto),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 2, right: 2),
+                      child: Icon(Icons.star, color: theme.primaryColor, size: 12),
+                    ),
+                    Text("(${nbReviews.toString()} reviews)", style: lightRoboto,)
+                  ],
+                ),
+                Text("${dailyRate} \$ / Day", style: boldRobotoBlack)
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 
 
 class TripPreviewContainer extends StatelessWidget {
   const TripPreviewContainer({
     super.key,
     required this.imagePath,
-    required this.carName,
+    required this.carBrand,
+    required this.carModel,
     required this.checkInDate,
     required this.checkOutDate,
-    required this.location,
+    required this.address,
     required this.height,
     required this.width
     });
 
   final String imagePath;
-  final String carName;
+  final String carBrand;
+  final String carModel;
   final DateTime checkInDate;
   final DateTime checkOutDate;
-  final String location;
+  final Address address;
   final double height;
   final double width;
   @override
   Widget build(BuildContext context) {
-    Image carImage = Image.asset(imagePath, height: height, width: width, fit: BoxFit.cover,);
+    Image carImage = Image.network(imagePath, height: height, width: width, fit: BoxFit.cover,);
     return IntrinsicWidth(
       child: Padding(
         padding: const EdgeInsets.only(right: 8.0, top: 8, bottom: 12),
@@ -173,7 +274,7 @@ class TripPreviewContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
               carImage,
-              TripInfoContainer(carName: carName, location: location, checkInDate: checkInDate, checkOutDate: checkOutDate,)
+              TripInfoContainer(carBrand: carBrand, carModel: carModel , address: address, checkInDate: checkInDate, checkOutDate: checkOutDate,)
             ],),
           ),
         ),
@@ -186,14 +287,16 @@ class TripPreviewContainer extends StatelessWidget {
 class TripInfoContainer extends StatelessWidget {
   const TripInfoContainer({
     super.key,
-    required this.carName,
-    required this.location,
+    required this.carBrand,
+    required this.carModel,
+    required this.address,
     required this.checkInDate,
     required this.checkOutDate
   });
 
-  final String carName;
-  final String location;
+  final String carBrand;
+  final String carModel;
+  final Address address;
   final DateTime checkInDate;
   final DateTime checkOutDate;
   
@@ -209,14 +312,14 @@ class TripInfoContainer extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(carName, style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),),
+              Text("${carBrand} ${carModel}", style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),),
               Row(
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 2, right: 2),
                     child: Icon(Icons.location_on_rounded, color: theme.primaryColor, size: 12),
                   ),
-                  Text("${location.toString()})", style: lightRoboto,)
+                  Text(address.streetNumber, style: lightRoboto,)
                 ],
               )
             ],

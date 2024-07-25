@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/classes/car.dart';
 import 'package:kimo/classes/listing.dart';
 import 'package:kimo/classes/listing_owner.dart';
+import 'package:kimo/classes/trip.dart';
 import 'package:kimo/screens/home_tab.dart';
 import 'package:kimo/utils/helper_functions.dart';
 import 'package:kimo/utils/theme_values.dart';
@@ -21,9 +22,11 @@ class ListingDetails extends StatefulWidget {
   ListingDetails({
     super.key,
     required this.carDocPath,
-    this.dateTimeRange
+    this.dateTimeRange,
+    this.listing
   });
   DateTimeRange? dateTimeRange;
+  Listing? listing;
   final String carDocPath;
   late bool isFavorite;
   @override
@@ -34,7 +37,7 @@ class ListingDetails extends StatefulWidget {
 
 class _ListingDetailsState extends State<ListingDetails> {
   User? currentUser;
-
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -67,14 +70,16 @@ class _ListingDetailsState extends State<ListingDetails> {
     }
     });
       try {
-        if (widget.dateTimeRange == null) {
+        if (widget.dateTimeRange == null || widget.listing == null) {
 
         final listingDocsResponse = await db.collection("listings").where("car", isEqualTo: widget.carDocPath)
         .where("end_date", isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime.now().add(Duration(days: 2)))).orderBy("start_date").limit(1).get();
         if (!listingDocsResponse.docs.isEmpty) {
-          final listing = Listing.fromFirestore(listingDocsResponse.docs.first);
-          var startDateMilliSecondsEpoch = max(listing.startDate.millisecondsSinceEpoch, Timestamp.now().millisecondsSinceEpoch);
-          widget.dateTimeRange = DateTimeRange(start: DateTime.fromMillisecondsSinceEpoch(startDateMilliSecondsEpoch).add(Duration(days: 1)), end: DateTime.fromMillisecondsSinceEpoch(startDateMilliSecondsEpoch).add(Duration(days: 2)));
+          widget.listing = Listing.fromFirestore(listingDocsResponse.docs.first);
+          var startDateMilliSecondsEpoch = max(widget.listing!.startDate.millisecondsSinceEpoch, Timestamp.now().millisecondsSinceEpoch);
+          var tmpDate = DateTime.fromMillisecondsSinceEpoch(startDateMilliSecondsEpoch);
+          var startDate = DateTime(tmpDate.year, tmpDate.month, tmpDate.day, 0, 0, 0);
+          widget.dateTimeRange = DateTimeRange(start: startDate.add(Duration(days: 1)), end: startDate.add(Duration(days: 2)));
         }
         }
         DocumentSnapshot carDocResponse = await db.doc(widget.carDocPath).get();
@@ -101,7 +106,43 @@ class _ListingDetailsState extends State<ListingDetails> {
     }*/
     
     //Future<DocumentSnapshot<Map<String, dynamic>>> future = db.doc(carDocPath).get();
+    Future<void> bookTrip(Listing listing, Timestamp startDate, Timestamp endDate, ) async {
+      try {
+        Car car = Car.fromFirestore(await db.doc(listing.carId).get());
+        String userDocId = (await db.collection("users").where("UID", isEqualTo: currentUser!.uid).get()).docs.first.id;
+        int duration = DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch).difference(DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch)).inDays + 1;
+        Trip trip = Trip(tripDocId: '', carDocPath: listing.carId, dailyRate: listing.dailyRate, duration: duration, endDate: endDate, guestId: userDocId, hostId: car.ownerDocId, positionLatitude: listing.positionLatitude, positionLongitude: listing.positionLongitude, startDate: startDate, pictureUrl: listing.pictureUrl, carModel: car.model, carBrand: car.brand, address: car.address);
+        await db.collection("trips").add(trip.toMap());
+        if (listing.startDate == startDate && listing.endDate == endDate) {
+          await db.collection("listings").doc(listing.docId).delete();
+        }
 
+        else if (listing.startDate == startDate) {
+          listing.startDate = trip.endDate;
+          await db.collection("listings").doc(listing.docId).update(listing.toMap());
+        }
+
+        else if (listing.endDate == endDate) {
+          listing.endDate = trip.startDate;
+          await db.collection("listings").doc(listing.docId).update(listing.toMap());
+
+        }
+
+        else {
+          Timestamp endDate2 = listing.endDate;
+          listing.endDate = trip.startDate;
+          await db.collection("listings").doc(listing.docId).update(listing.toMap());
+
+          listing.startDate = trip.endDate;
+          listing.endDate = endDate2;
+
+          await db.collection("listings").add(listing.toMap());
+
+        }}
+        catch (err) {
+          return Future.error(err);
+        }
+    }
 
     return FutureBuilder(future: fetchData(), builder: (context, snapshot){
       if (snapshot.hasError){
@@ -115,6 +156,7 @@ class _ListingDetailsState extends State<ListingDetails> {
       }
       else if (snapshot.connectionState == ConnectionState.done){
         if (car != null && widget.dateTimeRange != null){
+        int duration = widget.dateTimeRange!.end.difference(widget.dateTimeRange!.start).inDays + 1;
         return Container(
           color: Colors.white,
           child: Stack(children: [
@@ -256,7 +298,7 @@ class _ListingDetailsState extends State<ListingDetails> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("${car!.dailyRate} \$ / Day", style: boldRoboto,),
+                            Text("Total: ${car!.dailyRate * duration} \$", style: boldRoboto,),
                             Row(
                               children: [
                                 Text(car!.rating.toString(), style: lightRoboto),
@@ -269,6 +311,40 @@ class _ListingDetailsState extends State<ListingDetails> {
                     
                         ],),
                         ElevatedButton(onPressed: (){
+                              showDialog(context: context, barrierDismissible: true, builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('Trip Confirmation', style: robotoLargerBlack,),
+                                    content: Text("Confirm booking?"),
+                                    actions: [
+                                      TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Cancel", style: robotoLargePrimary,),),
+                                      TextButton(onPressed: (){
+                                        Navigator.of(context).pop();
+                                        showDialog(context: context, builder: (context) {
+                                          return FutureBuilder(future: bookTrip(widget.listing!, Timestamp.fromMillisecondsSinceEpoch(widget.dateTimeRange!.start.millisecondsSinceEpoch), Timestamp.fromMillisecondsSinceEpoch(widget.dateTimeRange!.end.millisecondsSinceEpoch)), builder: (context, snapshot) {
+                                            if (snapshot.connectionState == ConnectionState.done) {
+                                              Future.delayed(Duration.zero, () {
+                                              Navigator.of(context).pop();
+                                                       });
+                                              print("book success");
+                                              return SizedBox.shrink();
+                                            }
+                                            else if (snapshot.hasError) {
+                                                Future.delayed(Duration.zero, () {
+                                              Navigator.of(context).pop();
+                                                       });
+                                              print(snapshot.error.toString());
+                                              return SizedBox.shrink();
+                                            }
+
+                                            else {
+                                                return CenteredCircularProgressIndicator();
+                                            }
+                                          });
+                                        });
+                                      }, child: Text("Book", style: robotoLargePrimary)),
+                                    ],
+                                  );
+                                });
                         }, child: Padding(
                                         padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
                                         child: Text("Reserve", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),),

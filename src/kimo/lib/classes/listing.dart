@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Listing {
+  String docId;
   String brand;
   String model;
   String carId; // This can be used to store the Firestore document ID
@@ -12,10 +13,11 @@ class Listing {
   double positionLongitude;
   double rating;
   Timestamp startDate;
-  String picturePath;
   String pictureUrl;
+  String city;
   // Constructor
   Listing({
+    required this.docId,
     required this.brand,
     required this.model,
     required this.carId,
@@ -27,8 +29,8 @@ class Listing {
     required this.positionLongitude,
     required this.rating,
     required this.startDate,
-    required this.picturePath,
-    required this.pictureUrl
+    required this.pictureUrl,
+    required this.city
   });
 
   // Factory constructor to create a Car object from a Firestore DocumentSnapshot
@@ -36,9 +38,10 @@ class Listing {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
   
     return Listing(
+      docId: doc.id ?? '',
       brand: data['brand'] ?? '',
       model: data['model'] ?? '',
-      carId: data['car'], 
+      carId: data['car'],
       dailyRate: data['daily_rate'] ?? 0,
       endDate: data['end_date'] ?? Timestamp.now(),
       nbReviews: data['nb_reviews'] ?? 0,
@@ -47,8 +50,24 @@ class Listing {
       positionLongitude: data['position_longitude'] ?? 0.0,
       rating: (data['rating'] is num ? data['rating'].toDouble() : 0.0),
       startDate: data['start_date'] ?? Timestamp.now(),
-      picturePath: data['picture_path'],
-      pictureUrl: data['picture_url']
+      pictureUrl: data['picture_url'],
+      city: data['city']
     );
   }
+  Map<String, dynamic> toMap() {
+    return {
+      'brand': brand,
+      'model': model,
+      'car': carId,
+      'daily_rate': dailyRate,
+      'end_date': endDate,
+      'nb_reviews': nbReviews,
+      'nb_seats': nbSeats,
+      'position_latitude': positionLatitude,
+      'position_longitude': positionLongitude,
+      'rating': rating,
+      'start_date': startDate,
+      'picture_url': pictureUrl,
+      'city': city
+    };}
 }
