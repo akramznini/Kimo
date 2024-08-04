@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kimo/utils/theme_values.dart';
 
 class FavoriteToggleButton extends StatefulWidget {
@@ -98,5 +99,35 @@ class CustomButtonWhite extends StatelessWidget {
               ),
       ),
     );
+  }
+}
+
+
+class BackArrowButton extends StatefulWidget {
+  const BackArrowButton({
+    super.key,
+  });
+
+  @override
+  State<BackArrowButton> createState() => _BackArrowButtonState();
+  
+}
+
+class _BackArrowButtonState extends State<BackArrowButton> {
+  bool isPressed = false;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(onTap: (){Navigator.pop(context);}, onLongPressDown: (details) {
+      setState(() {
+        isPressed = true;
+      });
+    },
+    onLongPressUp: () {setState(() {
+      isPressed = false;
+    });},
+    onLongPressCancel: () {
+      isPressed = true;
+    }
+    ,child: SvgPicture.asset(isPressed ? "assets/icons/left-navigation-arrow-pressed.svg" : "assets/icons/left-navigation-arrow.svg", height: 20, width: 20,));
   }
 }

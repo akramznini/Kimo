@@ -8,6 +8,7 @@ import 'package:kimo/utils/theme_values.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kimo/utils/helper_functions.dart';
+import 'package:kimo/widgets/widgets.dart';
 
 class AccountTab extends StatefulWidget {
   const AccountTab({
@@ -92,3 +93,4 @@ showModalBottomSheet(context: context, isScrollControlled: true,builder: (BuildC
     ) : signedOutPage;
   }
 }
+
