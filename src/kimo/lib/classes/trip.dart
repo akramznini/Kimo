@@ -16,6 +16,8 @@ class Trip {
   String carModel;
   String carBrand;
   Address address;
+  bool isCancelled;
+  bool isReviewed;
   Trip({
     required this.tripDocId,
     required this.carDocPath,
@@ -30,7 +32,9 @@ class Trip {
     required this.pictureUrl,
     required this.carModel,
     required this.carBrand,
-    required this.address
+    required this.address,
+    this.isCancelled = false, // When creating a trip it can't be cancelled from the start
+    this.isReviewed = false, // // When creating a trip it can't be reviewed from the start
   });
 
   factory Trip.fromFirestore(DocumentSnapshot doc) {
@@ -50,6 +54,8 @@ class Trip {
       carModel: data['model'] ?? '',
       carBrand: data['brand'] ?? '',
       address: Address.fromMap(data['address']),
+      isCancelled: data['is_cancelled'],
+      isReviewed: data['is_reviewed']
     );
   }
   Map<String, dynamic> toMap() {
@@ -66,7 +72,9 @@ class Trip {
       'picture_url': pictureUrl,
       'position_latitude': positionLatitude,
       'position_longitude': positionLongitude,
-      'duration': duration
+      'duration': duration,
+      'is_cancelled': isCancelled,
+      'is_reviewed': isReviewed
     };
   }
 }

@@ -7,14 +7,15 @@ class ListingOwner {
   final int nbTrips;
   final String profilePictureUrl;
   final double rating;
-
+  final String docId;
   ListingOwner({
     required this.firstName,
     required this.lastName,
     required this.nbReviews,
     required this.profilePictureUrl,
     required this.rating,
-    required this.nbTrips
+    required this.nbTrips,
+    this.docId = ""
   });
 
   // Factory constructor to create an instance from a Firestore document
@@ -27,6 +28,7 @@ class ListingOwner {
       nbTrips: data['nb_trips'] as int,
       profilePictureUrl: data['profile_picture_url'] as String,
       rating: (data['rating'] as num).toDouble(),
+      docId: doc.id
     );
   }
 }

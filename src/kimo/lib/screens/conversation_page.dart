@@ -45,7 +45,6 @@ class _ConversationPageState extends State<ConversationPage> {
         }
         
         else {
-          print(snapshot.data!.docs.first.data());
           List<Widget> messagesWidgets = [];
           for (var doc in snapshot.data!.docs) {
             var docData = doc.data() as Map<String, dynamic>;

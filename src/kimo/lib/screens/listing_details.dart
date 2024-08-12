@@ -138,7 +138,12 @@ class _ListingDetailsState extends State<ListingDetails> {
 
           await db.collection("listings").add(listing.toMap());
 
-        }}
+        }
+        // Implement in Cloud Functions
+        await db.collection("users").doc(listingOwner!.docId).update({"nb_trips": listingOwner!.nbTrips + 1});
+        // End Cloud Functions
+        
+        }
         catch (err) {
           return Future.error(err);
         }
@@ -183,7 +188,7 @@ class _ListingDetailsState extends State<ListingDetails> {
                    children: [
                      Row(
                                  children: [
-                                   Text(car!.rating.toString(), style: lightRoboto),
+                                   Text(car!.rating.toStringAsFixed(1), style: lightRoboto),
                                    Padding(
                       padding: const EdgeInsets.only(left: 2, right: 2),
                       child: Icon(Icons.star, color: onPrimary, size: 12),
@@ -200,34 +205,7 @@ class _ListingDetailsState extends State<ListingDetails> {
                ),
                Padding(
                  padding: const EdgeInsets.all(8.0),
-                 child: Row(children: [
-                          Stack(
-                            children: [
-                              ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(listingOwner!.profilePictureUrl, width: 40, height: 40, fit: BoxFit.cover,),),
-                                  Positioned(
-                                    child: Container(decoration: BoxDecoration(color: Color.fromARGB(255, 244, 244, 244), boxShadow: [BoxShadow(offset: Offset(0, 4), blurRadius: 4, spreadRadius: 0, color: Color.fromARGB(80, 0, 0, 0))],borderRadius: BorderRadius.circular(4)), child: Padding(
-                                    padding: const EdgeInsets.only(left: 6.0, right: 6.0),
-                                    child: Row(children: [Text(listingOwner!.rating.toString(), style: robotoSmall,), SizedBox(width: 2,),Icon(Icons.star, color: onPrimary, size: 8,)],),
-                                  )), bottom: 0, left: 4,)
-                                  
-                                  ],
-                          ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                            Row(children: [
-                              Text("Hosted by ", style: boldRoboto,),
-                              Text(listingOwner!.firstName, style: lightRoboto)
-                            ],),
-                            Text("${listingOwner!.nbTrips} trips given", style: lightRobotoSmall)
-                          ],),
-                        )
-                        
-                        ],),
+                 child: HostPreviewContainer(listingOwner: listingOwner!),
                ),
                Padding(
                  padding: const EdgeInsets.only(left: 16, right: 16),
@@ -301,7 +279,7 @@ class _ListingDetailsState extends State<ListingDetails> {
                             Text("Total: ${car!.dailyRate * duration} \$", style: boldRoboto,),
                             Row(
                               children: [
-                                Text(car!.rating.toString(), style: lightRoboto),
+                                Text(car!.rating.toStringAsFixed(1), style: lightRoboto),
                                            Padding(
                                                       padding: const EdgeInsets.only(left: 2, right: 2),
                                                       child: Icon(Icons.star, color: onPrimary, size: 12),

@@ -32,7 +32,7 @@ class _MessagesTabState extends State<MessagesTab> {
     _conversationsStream = FirebaseFirestore.instance.collection("chat_rooms").where("guest_uid", isEqualTo: widget.user!.uid).snapshots();
   }
 
-  Future<List<Widget>> fetchChatRoomsData(List<QueryDocumentSnapshot> docs) async {
+  Future<List<Widget>> generateChatRoomWidgets(List<QueryDocumentSnapshot> docs) async {
     List<Widget> chatRooms = [];
     try {
       for (DocumentSnapshot document in docs) {
@@ -48,15 +48,23 @@ class _MessagesTabState extends State<MessagesTab> {
                         print(tripDoc.data());
                         var trip = Trip.fromFirestore(tripDoc);
                         print("line5");
-                        var message = Message.fromFirestore((await FirebaseFirestore.instance.collection("chat_rooms").doc(document.id).collection("messages").orderBy("timestamp", descending: true).limit(1).get()).docs.first);
+                        var messagesQuerySnapshot = await FirebaseFirestore.instance.collection("chat_rooms").doc(document.id).collection("messages").orderBy("timestamp", descending: true).limit(1).get();
                         print("line6");
-                        chatRooms.add(ConversationPreview(onTap:(){
+                        Message ?message;
+                        if (messagesQuerySnapshot.size != 0) {
+                          message = Message.fromFirestore(messagesQuerySnapshot.docs.first);
+                        }
+                        
+                        if (message != null) {
+                            chatRooms.add(ConversationPreview(onTap:(){
                           Navigator.of(context).push(MaterialPageRoute(builder: (context) {return ConversationPage(chatDocId: document.id, recipient: recipient, trip: trip, user: widget.user!,);})).then((value) async {
                             await FirebaseFirestore.instance.collection("chat_rooms").doc(document.id).update({'guest_unseen_messages': 0});
                           });
-                        }, recipient: recipient.firstName, carName: "${trip.carBrand} ${trip.carModel}", lastMessage: message.content, recipientProfilePictureUrl: recipient.profilePictureUrl, nbUnseenMessages: chatRoom.guestUnseenMessages));
+                        }, recipient: recipient.firstName, carName: "${trip.carBrand} ${trip.carModel}", carImgUrl: trip.pictureUrl, lastMessage: message!.content, recipientProfilePictureUrl: recipient.profilePictureUrl, nbUnseenMessages: chatRoom.guestUnseenMessages));
                         print("line7");
                         chatRooms.add(Divider(color: Color.fromARGB(255, 233, 233, 233), indent: 30, endIndent: 30,));
+                        }
+                        
                       }
     }
     catch (err) {
@@ -82,7 +90,7 @@ class _MessagesTabState extends State<MessagesTab> {
           }
 
           else {
-            var chatRooms = fetchChatRoomsData(snapshot.data!.docs);
+            var chatRooms = generateChatRoomWidgets(snapshot.data!.docs);
             return FutureBuilder(future: chatRooms, builder: (context, snapshot) {
               if (snapshot.hasError) {
                 print("Error 1");
@@ -94,6 +102,9 @@ class _MessagesTabState extends State<MessagesTab> {
               }
 
               else {
+                if (snapshot.data!.isEmpty) {
+                  return Expanded(child: Center(child: Text("There are no messages to display.", style: blackRobotoRegular,)));
+                }
                 return Expanded(
                     child: ListView(
                       children: snapshot.data!,
@@ -116,8 +127,10 @@ class ConversationPreview extends StatelessWidget {
     required this.lastMessage,
     required this.recipientProfilePictureUrl,
     required this.nbUnseenMessages,
-    required this.onTap
+    required this.onTap,
+    required this.carImgUrl
   });
+  final String carImgUrl;
   final VoidCallback onTap;
   final String recipient;
   final String carName;
@@ -136,7 +149,17 @@ class ConversationPreview extends StatelessWidget {
           Row(
             
             children: [
-            ClipRRect(borderRadius: BorderRadius.circular(50), child: Image.network(recipientProfilePictureUrl, width: 40, height: 40, fit: BoxFit.cover)),
+            Container(
+              width: 50,
+              height: 50,
+              child: Stack(
+                children: [
+                  ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(carImgUrl, width: 40, height: 40, fit: BoxFit.cover)),
+                  Positioned(child: Container(decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 2), borderRadius: BorderRadius.circular(50)), child: ClipRRect(borderRadius: BorderRadius.circular(50), child: Image.network(recipientProfilePictureUrl, width: 30, height: 30, fit: BoxFit.cover))), right: 0, bottom: 0,),
+                  
+                ],
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(

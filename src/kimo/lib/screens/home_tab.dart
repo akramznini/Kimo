@@ -22,8 +22,10 @@ class HomeTab extends StatefulWidget {
   const HomeTab({
     super.key,
     required this.user,
-    required this.geolocation
+    required this.geolocation,
+    this.searchOnOpen = false
   });
+  final bool searchOnOpen;
   final User ?user;
   final Future<Position> geolocation;
   @override
@@ -141,6 +143,10 @@ await Future.wait(futures).then((snapshot){setState(() {
     // TODO: implement initState
     super.initState();
     loadListingsData();
+    if (widget.searchOnOpen) {
+      blurred = true;
+      blurRadius = 10;
+    }
   }
 
 
@@ -222,7 +228,6 @@ await Future.wait(futures).then((snapshot){setState(() {
                       });});
                       
                       },),
-                      CustomButtonWhite(iconSize: 24, icon: Icon(Icons.notifications_none), onPressed: (){})
                     ],
                   ),
                 ],

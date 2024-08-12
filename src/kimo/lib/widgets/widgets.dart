@@ -6,6 +6,82 @@ import 'package:kimo/classes/trip.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/widgets/buttons.dart';
 
+void showCustomToast(BuildContext context, String message) {
+  OverlayEntry overlayEntry = OverlayEntry(
+    builder: (context) => Positioned(
+      bottom: 50.0,
+      left: MediaQuery.of(context).size.width * 0.1,
+      width: MediaQuery.of(context).size.width * 0.8,
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+          decoration: BoxDecoration(
+            color: Colors.black87,
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Text(
+            message,
+            style: TextStyle(color: Colors.white, fontSize: 16.0),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    ),
+  );
+
+  Overlay.of(context).insert(overlayEntry);
+
+  Future.delayed(Duration(seconds: 2), () {
+    overlayEntry.remove();
+  });
+}
+
+class HostPreviewContainer extends StatelessWidget {
+  const HostPreviewContainer({
+    super.key,
+    required this.listingOwner,
+  });
+
+  final ListingOwner listingOwner;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+        Stack(
+          children: [
+            ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(listingOwner!.profilePictureUrl, width: 40, height: 40, fit: BoxFit.cover,),),
+                Positioned(
+                  child: Container(decoration: BoxDecoration(color: Color.fromARGB(255, 244, 244, 244), boxShadow: [BoxShadow(offset: Offset(0, 4), blurRadius: 4, spreadRadius: 0, color: Color.fromARGB(80, 0, 0, 0))],borderRadius: BorderRadius.circular(4)), child: Padding(
+                  padding: const EdgeInsets.only(left: 6.0, right: 6.0),
+                  child: Row(children: [Text(listingOwner!.rating.toStringAsFixed(1), style: robotoSmall,), SizedBox(width: 2,),Icon(Icons.star, color: onPrimary, size: 8,)],),
+                )), bottom: 0, left: 4,)
+                
+                ],
+        ),
+      Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+          Row(children: [
+            Text("Hosted by ", style: boldRobotoBlack,),
+            Text(listingOwner!.firstName, style: lightRoboto)
+          ],),
+          Text("${listingOwner!.nbTrips} trips given", style: lightRobotoSmall)
+        ],),
+      )
+      
+      ],);
+  }
+}
+
+
+
+
+
 class CenteredCircularProgressIndicator extends StatelessWidget {
   const CenteredCircularProgressIndicator({
     super.key,

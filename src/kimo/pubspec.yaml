@@ -46,6 +46,7 @@ dependencies:
   geocoding: ^2.0.0
   another_carousel_pro: ^1.0.2
   fluttertoast: ^8.2.6
+  flutter_rating_bar: ^4.0.1
 
   
 

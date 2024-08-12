@@ -173,7 +173,7 @@ class CarInfoContainer extends StatelessWidget {
           Text("${brand} ${model}", style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),),
           Row(
             children: [
-              Text(rating.toString(), style: lightRoboto),
+              Text(rating.toStringAsFixed(1), style: lightRoboto),
               Padding(
                 padding: const EdgeInsets.only(left: 2, right: 2),
                 child: Icon(Icons.star, color: theme.primaryColor, size: 12),
@@ -270,8 +270,8 @@ class TripPreviewContainer extends StatelessWidget {
           decoration: BoxDecoration(border: Border.all(color: Color.fromARGB(255, 213, 213, 213), width: 0.5), borderRadius: BorderRadius.circular(22)),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(22),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
               carImage,
               TripInfoContainer(carBrand: carBrand, carModel: carModel , address: address, checkInDate: checkInDate, checkOutDate: checkOutDate,)
@@ -307,7 +307,7 @@ class TripInfoContainer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top:4, bottom:4, left: 8, right: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,12 +319,14 @@ class TripInfoContainer extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 2, right: 2),
                     child: Icon(Icons.location_on_rounded, color: theme.primaryColor, size: 12),
                   ),
-                  Text(address.streetNumber, style: lightRoboto,)
+                  Container(width: 120, child: Text(address.streetNumber, style: lightRoboto, maxLines: 2,))
                 ],
               )
             ],
           ),
-          Column(children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
             Text("${checkInDate.day}/${checkInDate.month}/${checkInDate.year}", style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w300),),
             Text("${checkOutDate.day}/${checkOutDate.month}/${checkOutDate.year}", style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w300),),
           ],)

@@ -12,6 +12,6 @@ TextStyle boldRobotoSmall = GoogleFonts.roboto(fontSize: 8, fontWeight: FontWeig
 TextStyle boldRobotoSmall2 = GoogleFonts.roboto(fontSize: 10, fontWeight: FontWeight.w700, color: Color.fromARGB(255, 84, 84, 84), decoration: TextDecoration.none);
 TextStyle boldRoboto = GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w700, color: Color.fromARGB(255, 84, 84, 84), decoration: TextDecoration.none);
 TextStyle whiteRobotoRegular = GoogleFonts.roboto(fontSize: 13, fontWeight: FontWeight.w400, color: Color.fromARGB(255, 255, 255, 255), decoration: TextDecoration.none);
-TextStyle blackRobotoRegular = GoogleFonts.roboto(fontSize: 13, fontWeight: FontWeight.w400, color: Color.fromARGB(255, 255, 255, 255), decoration: TextDecoration.none);
+TextStyle blackRobotoRegular = GoogleFonts.roboto(fontSize: 13, fontWeight: FontWeight.w400, color: Color.fromARGB(255, 0, 0, 0), decoration: TextDecoration.none);
 TextStyle boldRobotoBlack = GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w700, color: Color.fromARGB(255, 0, 0, 0), decoration: TextDecoration.none);
 TextStyle lightRobotoSmall = GoogleFonts.roboto(fontSize: 8, fontWeight: FontWeight.w300, color: Color.fromARGB(255, 84, 84, 84), decoration: TextDecoration.none);
