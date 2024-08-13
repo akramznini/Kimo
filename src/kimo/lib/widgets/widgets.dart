@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kimo/classes/address.dart';
 import 'package:kimo/classes/listing_owner.dart';
 import 'package:kimo/classes/trip.dart';
+import 'package:kimo/utils/helper_functions.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/widgets/buttons.dart';
 
@@ -226,6 +228,32 @@ class _MessageInputState extends State<MessageInput> {
     ));
     return Row(
       children: widgets,
+    );
+  }
+}
+
+class locationPreviewContainer extends StatelessWidget {
+  const locationPreviewContainer({
+    super.key,
+    required this.address,
+    required this.latitude,
+    required this.longitude
+  });
+
+  final Address address;
+  final double latitude;
+  final double longitude;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){openMap(latitude, longitude);},
+      child: Row(
+       
+       children: [
+       Icon(Icons.location_on_outlined, size: 24, color: onPrimary,),
+       SizedBox(width: 12,),
+       Text("${address.streetNumber}, ${address.city}", style: lightRoboto,)
+      ],),
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kimo/classes/address.dart';
 import 'package:kimo/classes/car.dart';
 import 'package:kimo/classes/listing.dart';
 import 'package:kimo/classes/listing_owner.dart';
@@ -23,8 +24,10 @@ class ListingDetails extends StatefulWidget {
     super.key,
     required this.carDocPath,
     this.dateTimeRange,
-    this.listing
+    this.listing,
+    required this.goToTab
   });
+  final void Function(int) goToTab;
   DateTimeRange? dateTimeRange;
   Listing? listing;
   final String carDocPath;
@@ -238,13 +241,7 @@ class _ListingDetailsState extends State<ListingDetails> {
                ),
                Padding(
                  padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8),
-                 child: Row(
-                  
-                  children: [
-                  Icon(Icons.location_on_outlined, size: 24,),
-                  SizedBox(width: 12,),
-                  Text("${car!.address.streetNumber}, ${car!.address.city}", style: lightRoboto,)
-                 ],),
+                 child: locationPreviewContainer(address: car!.address, latitude: car!.location.latitude, longitude: car!.location.longitude,),
                  
                ),
                Padding(
@@ -301,9 +298,12 @@ class _ListingDetailsState extends State<ListingDetails> {
                                           return FutureBuilder(future: bookTrip(widget.listing!, Timestamp.fromMillisecondsSinceEpoch(widget.dateTimeRange!.start.millisecondsSinceEpoch), Timestamp.fromMillisecondsSinceEpoch(widget.dateTimeRange!.end.millisecondsSinceEpoch)), builder: (context, snapshot) {
                                             if (snapshot.connectionState == ConnectionState.done) {
                                               Future.delayed(Duration.zero, () {
-                                              Navigator.of(context).pop();
-                                                       });
+                                              Navigator.popUntil(context, (route) => route.isFirst);
+                                                       }).then((onValue){showCustomToast(context, "Your booking is confirmed!");}).then((onValue){});
+                                              
                                               print("book success");
+                                              
+                                              
                                               return SizedBox.shrink();
                                             }
                                             else if (snapshot.hasError) {
@@ -318,6 +318,7 @@ class _ListingDetailsState extends State<ListingDetails> {
                                                 return CenteredCircularProgressIndicator();
                                             }
                                           });
+                                        
                                         });
                                       }, child: Text("Book", style: robotoLargePrimary)),
                                     ],
@@ -349,3 +350,4 @@ class _ListingDetailsState extends State<ListingDetails> {
     });
   }
 }
+

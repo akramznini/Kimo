@@ -21,9 +21,10 @@ class SearchResultsPage extends StatefulWidget {
   const SearchResultsPage({
     super.key,
     required this.city,
-    required this.dateTimeRange
+    required this.dateTimeRange,
+    required this.goToTab
   });
-  
+  final void Function(int) goToTab;
   final String city;
   final DateTimeRange dateTimeRange;
   @override
@@ -75,7 +76,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
             listingWidgets.add(
               Center(child: CarPreviewContainerWithPrice(onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                  return ListingDetails(carDocPath: listing.carId, listing: listing, dateTimeRange: widget.dateTimeRange,);
+                  return ListingDetails(goToTab: widget.goToTab, carDocPath: listing.carId, listing: listing, dateTimeRange: widget.dateTimeRange,);
                 }));
               }, dailyRate: listing.dailyRate, imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: 120, width: min(MediaQuery.of(context).size.width -50, 300)),)
             );

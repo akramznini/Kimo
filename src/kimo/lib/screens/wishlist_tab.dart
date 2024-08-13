@@ -67,7 +67,7 @@ class _WishlistTabState extends State<WishlistTab> {
         List<Widget> carWidgets = [];
         for (var car in snapshot.data!){
           carWidgets.add(Center(
-            child: WishlistCarPreviewContainer(id: 1, onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context){return ListingDetails(carDocPath: car.docPath,);})).then((value) {setState(() {
+            child: WishlistCarPreviewContainer(id: 1, onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context){return ListingDetails(goToTab: widget.goToTab, carDocPath: car.docPath,);})).then((value) {setState(() {
               fetchCars = fetchFavoriteCars();
             });});}, onFavoritePressed: () async {
               await toggleFavoritesCallback(widget.user, car.docPath, true);

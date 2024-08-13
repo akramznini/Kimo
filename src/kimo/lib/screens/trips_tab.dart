@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -74,23 +76,30 @@ class _TripsTabState extends State<TripsTab> {
           List<Widget> previousTripsWidgets = [];
           List<Widget> cancelledTripsWidgets = [];
           for (var trip in trips) {
-            var tripWidgets;
             if (trip.isCancelled) {
-              tripWidgets = cancelledTripsWidgets;
+
+              cancelledTripsWidgets.add(Center(child: GestureDetector(onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context){return TripDetails(goToTab: widget.goToTab, trip: trip,);})).then((value) {setState(() {
+              fetchTrips = fetchTripsData();
+            });});},
+            child: TripPreviewContainer(imagePath: trip.pictureUrl, carBrand: trip.carBrand, carModel: trip.carModel, checkInDate: DateTime.fromMillisecondsSinceEpoch(trip.startDate.millisecondsSinceEpoch), checkOutDate: DateTime.fromMillisecondsSinceEpoch(trip.endDate.millisecondsSinceEpoch), address: trip.address, height: 60, width: 80))));
+            
             }
             else {
               if (trip.endDate.millisecondsSinceEpoch < Timestamp.now().millisecondsSinceEpoch){
                 // previous trip
-                tripWidgets = previousTripsWidgets;
-              }
-              else {
-                tripWidgets = currentTripsWidgets;
-              }
-            }
-            tripWidgets.add(Center(child: GestureDetector(onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context){return TripDetails(trip: trip,);})).then((value) {setState(() {
+                previousTripsWidgets.add(Center(child: GestureDetector(onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context){return TripDetails(goToTab: widget.goToTab, trip: trip,);})).then((value) {setState(() {
               fetchTrips = fetchTripsData();
             });});},
             child: TripPreviewContainer(imagePath: trip.pictureUrl, carBrand: trip.carBrand, carModel: trip.carModel, checkInDate: DateTime.fromMillisecondsSinceEpoch(trip.startDate.millisecondsSinceEpoch), checkOutDate: DateTime.fromMillisecondsSinceEpoch(trip.endDate.millisecondsSinceEpoch), address: trip.address, height: 60, width: 80))));
+              }
+              else {
+                currentTripsWidgets.add(Center(child: GestureDetector(onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context){return TripDetails(goToTab: widget.goToTab, trip: trip,);})).then((value) {setState(() {
+              fetchTrips = fetchTripsData();
+            });});},
+            child: TripPreviewContainerLarge(imagePath: trip.pictureUrl, carBrand: trip.carBrand, carModel: trip.carModel, checkInDate: DateTime.fromMillisecondsSinceEpoch(trip.startDate.millisecondsSinceEpoch), checkOutDate: DateTime.fromMillisecondsSinceEpoch(trip.endDate.millisecondsSinceEpoch), address: trip.address, height: 120, width: min(MediaQuery.of(context).size.width -50, 300)))));
+              }
+            }
+            
           }
           Widget content;
           List<Widget> widgets = [];
