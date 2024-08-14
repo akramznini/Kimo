@@ -11,6 +11,7 @@ import 'package:kimo/classes/address.dart';
 import 'package:kimo/classes/car.dart';
 import 'package:kimo/classes/listing.dart';
 import 'package:kimo/classes/listing_owner.dart';
+import 'package:kimo/classes/review.dart';
 import 'package:kimo/classes/trip.dart';
 import 'package:kimo/screens/home_tab.dart';
 import 'package:kimo/utils/helper_functions.dart';
@@ -55,8 +56,9 @@ class _ListingDetailsState extends State<ListingDetails> {
     FirebaseFirestore db = FirebaseFirestore.instance;
     Car ?car;
     ListingOwner ?listingOwner;
-    List<Placemark> ?placemarks;
-    
+    List<Review> reviews = [];
+    List<Map<String, dynamic>?> reviewers = [];
+
     Future<void> fetchData() async {
     FirebaseAuth.instance
     .authStateChanges()
@@ -91,6 +93,13 @@ class _ListingDetailsState extends State<ListingDetails> {
           DocumentSnapshot listingOwnerDoc = await db.collection("users").doc(car!.ownerDocId).get();
           
           listingOwner = ListingOwner.fromFirestore(listingOwnerDoc);
+        }
+        QuerySnapshot reviewsQuerySnapshot = await db.collection("reviews").where("reviewee", isEqualTo: listingOwner!.docId).limit(6).get();
+        for (var doc in reviewsQuerySnapshot.docs) {
+          Review review = Review.fromFirestore(doc);
+          reviews.add(review);
+          var reviewer = (await db.collection("users").doc(review.reviewer).get()).data();
+          reviewers.add(reviewer);
         }
         }
       catch (e) {
@@ -152,202 +161,228 @@ class _ListingDetailsState extends State<ListingDetails> {
         }
     }
 
-    return FutureBuilder(future: fetchData(), builder: (context, snapshot){
-      if (snapshot.hasError){
-        print(snapshot.error);
-        return Stack(children: [
-          Center(child: Text("There was a problem loading data. ")),
-          Positioned(
-              top: 10,
-              left: 10,
-              child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},)),]);
-      }
-      else if (snapshot.connectionState == ConnectionState.done){
-        if (car != null && widget.dateTimeRange != null){
-        int duration = widget.dateTimeRange!.end.difference(widget.dateTimeRange!.start).inDays + 1;
-        return Container(
-          color: Colors.white,
-          child: Stack(children: [
-            ListView(children: [
-               SizedBox(
-                height: 200,
-                width: double.minPositive,
-                 child: AnotherCarousel(
-                  dotSize: 4,
-                  dotBgColor: Color.fromARGB(0, 233, 233, 233),
-                  dotIncreaseSize: 2,
-                  indicatorBgPadding: 10,
-                  autoplay: false,
-                  images: car!.pictures.map((url){return Image.network(url, fit: BoxFit.cover,);}).toList()),
-               ),
-               Padding(
-                 padding: const EdgeInsets.all(8.0),
-                 child: Text("${car!.brand} ${car!.model}", style: GoogleFonts.roboto(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold, decoration: TextDecoration.none),),
-               ),
-               Padding(
-                 padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                   children: [
-                     Row(
-                                 children: [
-                                   Text(car!.rating.toStringAsFixed(1), style: lightRoboto),
-                                   Padding(
-                      padding: const EdgeInsets.only(left: 2, right: 2),
-                      child: Icon(Icons.star, color: onPrimary, size: 12),
-                                   ),
-                                   Text("(${car!.nbReviews.toString()} reviews)", style: lightRoboto,)
-                                 ],
-                               ),
-                      Text("${car!.dailyRate} \$ / Day", style: lightRoboto,),
-                      
-                   ],
-                 ),
-                
-
-               ),
-               Padding(
-                 padding: const EdgeInsets.all(8.0),
-                 child: HostPreviewContainer(listingOwner: listingOwner!),
-               ),
-               Padding(
-                 padding: const EdgeInsets.only(left: 16, right: 16),
-                 child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
-               ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16, right: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                  Text(dateTimeToString(widget.dateTimeRange!.start), style: lightRoboto,),
-                                  Text(dateTimeToString(widget.dateTimeRange!.end), style: lightRoboto,)
-                                ],),
-                                GestureDetector(
-                                      onTap: (){},
-                                      child: Text("CHANGE DATE", style: GoogleFonts.roboto(color: onPrimary, fontWeight: FontWeight.bold, fontSize: 10, decoration: TextDecoration.none),))
-                          ],),
-                        ),
-                      Padding(
-                 padding: const EdgeInsets.only(left: 16, right: 16),
-                 child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
-               ),
-               CarSpecs(transmission: car!.transmission, nbSeats: car!.nbSeats, fuel: car!.fuel),
-               Padding(
-                 padding: const EdgeInsets.only(left: 16, right: 16),
-                 child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
-               ),
-               Padding(
-                 padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8),
-                 child: locationPreviewContainer(address: car!.address, latitude: car!.location.latitude, longitude: car!.location.longitude,),
-                 
-               ),
-               Padding(
-                 padding: const EdgeInsets.only(left: 16, right: 16),
-                 child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
-               ),
-              SizedBox(height: 50,),
-            ],),
-            Positioned(
-              top: 10,
-              left: 10,
-              child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){print("buttonPressed");Navigator.pop(context);},)),
-              Positioned(top: 16, right: 16, child: FavoriteToggleButton(isFavorite: widget.isFavorite, size: 20, toggleFavoriteCallback: () async {
-                print("buttonPressed");
-                toggleFavoritesCallback(currentUser, car!.docPath, widget.isFavorite);
-                widget.isFavorite = !widget.isFavorite;
-              },)),
+    return Scaffold(
+      body: SafeArea(
+        child: FutureBuilder(future: fetchData(), builder: (context, snapshot){
+          if (snapshot.hasError){
+            print(snapshot.error);
+            return Stack(children: [
+              Center(child: Text("There was a problem loading data. ")),
               Positioned(
-                bottom: 0,
-
-                child:  Container(
-                  color: Colors.white,
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                    child: Row(
+                  top: 10,
+                  left: 10,
+                  child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},)),]);
+          }
+          else if (snapshot.connectionState == ConnectionState.done){
+            if (car != null && widget.dateTimeRange != null){
+            int duration = widget.dateTimeRange!.end.difference(widget.dateTimeRange!.start).inDays + 1;
+            List<Widget> reviewWidgets = [];
+            for (int i = 0; i < reviews.length ; i++) {
+              Review review = reviews[i];
+              String name = reviewers[i]!["first_name"];
+              String profilePictureUrl = reviewers[i]!["profile_picture_url"];
+              reviewWidgets.add(Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ReviewPreviewContainer(review: review, name: name, profilePictureUrl: profilePictureUrl),
+              ));
+            }
+            return Container(
+              color: Colors.white,
+              child: Stack(
+                children: [
+                ListView(children: [
+                   SizedBox(
+                    height: 200,
+                    width: double.minPositive,
+                     child: AnotherCarousel(
+                      dotSize: 4,
+                      dotBgColor: Color.fromARGB(0, 233, 233, 233),
+                      dotIncreaseSize: 2,
+                      indicatorBgPadding: 10,
+                      autoplay: false,
+                      images: car!.pictures.map((url){return Image.network(url, fit: BoxFit.cover,);}).toList()),
+                   ),
+                   Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: Text("${car!.brand} ${car!.model}", style: GoogleFonts.roboto(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold, decoration: TextDecoration.none),),
+                   ),
+                   Padding(
+                     padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Total: ${car!.dailyRate * duration} \$", style: boldRoboto,),
-                            Row(
-                              children: [
-                                Text(car!.rating.toStringAsFixed(1), style: lightRoboto),
-                                           Padding(
-                                                      padding: const EdgeInsets.only(left: 2, right: 2),
-                                                      child: Icon(Icons.star, color: onPrimary, size: 12),
-                                           ),
-                              ],
-                            ),
+                       children: [
+                         Row(
+                                     children: [
+                                       Text(car!.rating.toStringAsFixed(1), style: lightRoboto),
+                                       Padding(
+                          padding: const EdgeInsets.only(left: 2, right: 2),
+                          child: Icon(Icons.star, color: onPrimary, size: 12),
+                                       ),
+                                       Text("(${car!.nbReviews.toString()} reviews)", style: lightRoboto,)
+                                     ],
+                                   ),
+                          Text("${car!.dailyRate} \$ / Day", style: lightRoboto,),
+                          
+                       ],
+                     ),
                     
-                        ],),
-                        ElevatedButton(onPressed: (){
-                              showDialog(context: context, barrierDismissible: true, builder: (context) {
-                                  return AlertDialog(
-                                    title: Text('Trip Confirmation', style: robotoLargerBlack,),
-                                    content: Text("Confirm booking?"),
-                                    actions: [
-                                      TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Cancel", style: robotoLargePrimary,),),
-                                      TextButton(onPressed: (){
-                                        Navigator.of(context).pop();
-                                        showDialog(context: context, builder: (context) {
-                                          return FutureBuilder(future: bookTrip(widget.listing!, Timestamp.fromMillisecondsSinceEpoch(widget.dateTimeRange!.start.millisecondsSinceEpoch), Timestamp.fromMillisecondsSinceEpoch(widget.dateTimeRange!.end.millisecondsSinceEpoch)), builder: (context, snapshot) {
-                                            if (snapshot.connectionState == ConnectionState.done) {
-                                              Future.delayed(Duration.zero, () {
-                                              Navigator.popUntil(context, (route) => route.isFirst);
-                                                       }).then((onValue){showCustomToast(context, "Your booking is confirmed!");}).then((onValue){});
-                                              
-                                              print("book success");
-                                              
-                                              
-                                              return SizedBox.shrink();
-                                            }
-                                            else if (snapshot.hasError) {
-                                                Future.delayed(Duration.zero, () {
-                                              Navigator.of(context).pop();
-                                                       });
-                                              print(snapshot.error.toString());
-                                              return SizedBox.shrink();
-                                            }
-
-                                            else {
-                                                return CenteredCircularProgressIndicator();
-                                            }
-                                          });
-                                        
-                                        });
-                                      }, child: Text("Book", style: robotoLargePrimary)),
-                                    ],
-                                  );
-                                });
-                        }, child: Padding(
-                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-                                        child: Text("Reserve", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),),
-                                      ), style: ElevatedButton.styleFrom(backgroundColor: onPrimary),),
-                      ],
+        
+                   ),
+                   Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: HostPreviewContainer(listingOwner: listingOwner!),
+                   ),
+                   Padding(
+                     padding: const EdgeInsets.only(left: 16, right: 16),
+                     child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
+                   ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16, right: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                      Text(dateTimeToString(widget.dateTimeRange!.start), style: lightRoboto,),
+                                      Text(dateTimeToString(widget.dateTimeRange!.end), style: lightRoboto,)
+                                    ],),
+                                    GestureDetector(
+                                          onTap: (){},
+                                          child: Text("CHANGE DATE", style: GoogleFonts.roboto(color: onPrimary, fontWeight: FontWeight.bold, fontSize: 10, decoration: TextDecoration.none),))
+                              ],),
+                            ),
+                          Padding(
+                     padding: const EdgeInsets.only(left: 16, right: 16),
+                     child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
+                   ),
+                   CarSpecs(transmission: car!.transmission, nbSeats: car!.nbSeats, fuel: car!.fuel),
+                   Padding(
+                     padding: const EdgeInsets.only(left: 16, right: 16),
+                     child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
+                   ),
+                   Padding(
+                     padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8),
+                     child: locationPreviewContainer(address: car!.address, latitude: car!.location.latitude, longitude: car!.location.longitude,),
+                     
+                   ),
+                   Padding(
+                     padding: const EdgeInsets.only(left: 16, right: 16),
+                     child: Divider(color: Color.fromARGB(255, 233, 233, 233),),
+                   ),
+                   Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: Text("Reviews", style: boldRobotoBlack,),
+                   ),
+                  SizedBox(
+                    height: 190,
+                    child: ListView(
+                      children: reviewWidgets,
+                      scrollDirection: Axis.horizontal,
                     ),
                   ),
-                ))
-          ],),
-        ); 
-      }
-      else {
-        return Stack(children: [
-          Center(child: Text("this car is not currently available")),
-          Positioned(
-              top: 10,
-              left: 10,
-              child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},)),]);
-      }
-      }
-      else {
-        return const CenteredCircularProgressIndicator();
-      }
-    });
+                  SizedBox(height: 80,)
+                ],),
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){print("buttonPressed");Navigator.pop(context);},)),
+                  Positioned(top: 16, right: 16, child: FavoriteToggleButton(isFavorite: widget.isFavorite, size: 20, toggleFavoriteCallback: () async {
+                    print("buttonPressed");
+                    toggleFavoritesCallback(currentUser, car!.docPath, widget.isFavorite);
+                    widget.isFavorite = !widget.isFavorite;
+                  },)),
+                  Positioned(
+                    bottom: 0,
+        
+                    child:  Container(
+                      color: Colors.white,
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Total: ${car!.dailyRate * duration} \$", style: boldRoboto,),
+                                Row(
+                                  children: [
+                                    Text(car!.rating.toStringAsFixed(1), style: lightRoboto),
+                                               Padding(
+                                                          padding: const EdgeInsets.only(left: 2, right: 2),
+                                                          child: Icon(Icons.star, color: onPrimary, size: 12),
+                                               ),
+                                  ],
+                                ),
+                        
+                            ],),
+                            ElevatedButton(onPressed: (){
+                                  showDialog(context: context, barrierDismissible: true, builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('Trip Confirmation', style: robotoLargerBlack,),
+                                        content: Text("Confirm booking?"),
+                                        actions: [
+                                          TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Cancel", style: robotoLargePrimary,),),
+                                          TextButton(onPressed: (){
+                                            Navigator.of(context).pop();
+                                            showDialog(context: context, builder: (context) {
+                                              return FutureBuilder(future: bookTrip(widget.listing!, Timestamp.fromMillisecondsSinceEpoch(widget.dateTimeRange!.start.millisecondsSinceEpoch), Timestamp.fromMillisecondsSinceEpoch(widget.dateTimeRange!.end.millisecondsSinceEpoch)), builder: (context, snapshot) {
+                                                if (snapshot.connectionState == ConnectionState.done) {
+                                                  Future.delayed(Duration.zero, () {
+                                                  Navigator.popUntil(context, (route) => route.isFirst);
+                                                           }).then((onValue){showCustomToast(context, "Your booking is confirmed!");}).then((onValue){});
+                                                  
+                                                  print("book success");
+                                                  
+                                                  
+                                                  return SizedBox.shrink();
+                                                }
+                                                else if (snapshot.hasError) {
+                                                    Future.delayed(Duration.zero, () {
+                                                  Navigator.of(context).pop();
+                                                           });
+                                                  print(snapshot.error.toString());
+                                                  return SizedBox.shrink();
+                                                }
+        
+                                                else {
+                                                    return CenteredCircularProgressIndicator();
+                                                }
+                                              });
+                                            
+                                            });
+                                          }, child: Text("Book", style: robotoLargePrimary)),
+                                        ],
+                                      );
+                                    });
+                            }, child: Padding(
+                                            padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                                            child: Text("Reserve", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),),
+                                          ), style: ElevatedButton.styleFrom(backgroundColor: onPrimary),),
+                          ],
+                        ),
+                      ),
+                    ))
+              ],),
+            ); 
+          }
+          else {
+            return Stack(children: [
+              Center(child: Text("this car is not currently available")),
+              Positioned(
+                  top: 10,
+                  left: 10,
+                  child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},)),]);
+          }
+          }
+          else {
+            return const CenteredCircularProgressIndicator();
+          }
+        }),
+      ),
+    );
   }
 }
 

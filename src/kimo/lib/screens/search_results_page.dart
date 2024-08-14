@@ -63,48 +63,52 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(future: fetchListings, builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        List<Listing> listings = snapshot.data!;
-        Widget body;
-        if (listings.isEmpty) {
-          body = Center(child: Text("no results avaialable for current search"));
-        }
-        else {
-          List<Widget> listingWidgets = [Center(child: TabTitle(title: "Available cars")), SizedBox(height: 20,)];
-          for (var listing in listings) {
-            listingWidgets.add(
-              Center(child: CarPreviewContainerWithPrice(onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                  return ListingDetails(goToTab: widget.goToTab, carDocPath: listing.carId, listing: listing, dateTimeRange: widget.dateTimeRange,);
-                }));
-              }, dailyRate: listing.dailyRate, imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: 120, width: min(MediaQuery.of(context).size.width -50, 300)),)
+    return Scaffold(
+      body: SafeArea(
+        child: FutureBuilder(future: fetchListings, builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Listing> listings = snapshot.data!;
+            Widget body;
+            if (listings.isEmpty) {
+              body = Center(child: Text("no results avaialable for current search"));
+            }
+            else {
+              List<Widget> listingWidgets = [Center(child: TabTitle(title: "Available cars")), SizedBox(height: 20,)];
+              for (var listing in listings) {
+                listingWidgets.add(
+                  Center(child: CarPreviewContainerWithPrice(onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                      return ListingDetails(goToTab: widget.goToTab, carDocPath: listing.carId, listing: listing, dateTimeRange: widget.dateTimeRange,);
+                    }));
+                  }, dailyRate: listing.dailyRate, imageUrl: listing.pictureUrl, brand: listing.brand, model: listing.model, nbReviews: listing.nbReviews, rating: listing.rating, height: 120, width: min(MediaQuery.of(context).size.width -50, 300)),)
+                );
+              }
+              body = ListView(children: listingWidgets,);
+        
+            }
+            return Scaffold(
+              body: Stack(
+                children: [
+                  body,
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},))
+                ],
+                ),
             );
           }
-          body = ListView(children: listingWidgets,);
-
-        }
-        return Scaffold(
-          body: Stack(
-            children: [
-              body,
-              Positioned(
-                top: 10,
-                left: 10,
-                child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},))
-            ],
-            ),
-        );
-      }
-
-      else if (snapshot.hasError) {
-        return Text(snapshot.error.toString());
-      }
-
-      else {
-        return CenteredCircularProgressIndicator();
-      }
-
-    });
+        
+          else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+        
+          else {
+            return CenteredCircularProgressIndicator();
+          }
+        
+        }),
+      ),
+    );
   }
 }

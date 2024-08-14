@@ -449,7 +449,7 @@ class CarSpecs extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        width: 50,
+                        width: 60,
                         child: Column(
                           children: [
                             Text("Transmission", style: lightRobotoSmall,),
@@ -461,7 +461,7 @@ class CarSpecs extends StatelessWidget {
                           ],),
                       ),
                      Container(
-                      width: 50,
+                      width: 60,
                        child: Column(
                           children: [
                             Text("Seats", style: lightRobotoSmall),
@@ -473,7 +473,7 @@ class CarSpecs extends StatelessWidget {
                           ],),
                      ),
                      Container(
-                      width: 50,
+                      width: 60,
                        child: Column(
                           children: [
                             Text("Energy", style: lightRobotoSmall),

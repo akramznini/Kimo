@@ -110,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     
     tabs = [HomeTab(geolocation: geolocation!, user: currentUser, goToTab: _onChangedTab,), WishlistTab(user: currentUser, goToTab: _onChangedTab,), MessagesTab(user: currentUser,), TripsTab(user: currentUser, goToTab: _onChangedTab,), AccountTab(user: currentUser,)];
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         
         child: Column(

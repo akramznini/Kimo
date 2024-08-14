@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/classes/address.dart';
 import 'package:kimo/classes/listing_owner.dart';
+import 'package:kimo/classes/review.dart';
 import 'package:kimo/classes/trip.dart';
 import 'package:kimo/utils/helper_functions.dart';
 import 'package:kimo/utils/theme_values.dart';
@@ -254,6 +255,58 @@ class locationPreviewContainer extends StatelessWidget {
        SizedBox(width: 12,),
        Text("${address.streetNumber}, ${address.city}", style: lightRoboto,)
       ],),
+    );
+  }
+}
+
+
+class ReviewPreviewContainer extends StatelessWidget {
+  const ReviewPreviewContainer({
+    super.key,
+    required this.review,
+    required this.name,
+    required this.profilePictureUrl
+  });
+
+  final Review review;
+  final String name;
+  final String profilePictureUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(border: Border.all(color: greySelected, width: 0.5), borderRadius: BorderRadius.circular(15)),
+      width: 240,
+      height: 150,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Row(
+            children: [
+              Text(review.rating.toStringAsFixed(1), style: lightRoboto),
+              Padding(
+                padding: const EdgeInsets.only(left: 2, right: 2),
+                child: Icon(Icons.star, color: onPrimary, size: 12),
+              ),
+            ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(review.content, style: blackRobotoRegular, maxLines: 4,),
+            ),
+            Row(
+              children: [
+                ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(profilePictureUrl, width: 40, height: 40, fit: BoxFit.cover,),),
+                SizedBox(width: 10,),
+                Text(name, style: boldRobotoBlack)
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
