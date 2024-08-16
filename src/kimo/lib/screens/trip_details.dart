@@ -95,7 +95,7 @@ class _TripDetailsState extends State<TripDetails> {
 
     else {
       Car car = Car.fromFirestore(await db.doc(trip.carDocPath).get());
-      Listing listing = Listing(city: car.address.city.toLowerCase(), docId: '', brand: car.brand, model: car.model, carId: trip.carDocPath, dailyRate: car.dailyRate, endDate: trip.endDate, nbReviews: car.nbReviews, nbSeats: car.nbSeats, positionLatitude: car.location.latitude, positionLongitude: car.location.longitude, rating: car.rating, startDate: trip.startDate, pictureUrl: car.pictures[0]);
+      Listing listing = Listing(transmission: car.transmission, fuel: car.fuel, city: car.address.city.toLowerCase(), docId: '', brand: car.brand, model: car.model, carId: trip.carDocPath, dailyRate: car.dailyRate, endDate: trip.endDate, nbReviews: car.nbReviews, nbSeats: car.nbSeats, positionLatitude: car.location.latitude, positionLongitude: car.location.longitude, rating: car.rating, startDate: trip.startDate, pictureUrl: car.pictures[0]);
       await db.collection("listings").add(listing.toMap());
     }
     

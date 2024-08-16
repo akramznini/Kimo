@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/screens/sign_in_page.dart';
+import 'package:kimo/screens/sign_in_page2.dart';
+import 'package:kimo/screens/sign_up_page.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,17 +23,14 @@ class AccountTab extends StatefulWidget {
 }
 
 class _AccountTabState extends State<AccountTab> {
-  void showSignInBottomSheet(){
-showModalBottomSheet(context: context, isScrollControlled: true,builder: (BuildContext context){
-                    return FractionallySizedBox(heightFactor: 0.85,child: SignInPage());
-                  });
+  void showSignInPage(){
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {return SignInPage3();}));
   }
-  
+  late bool isSignedIn;
   @override
   Widget build(BuildContext context) {
-    
-    bool isSignedIn = (widget.user != null);
-    print(isSignedIn);
+    isSignedIn = (widget.user != null);
+    print("user signed:  $isSignedIn");
     Widget signedOutPage = Padding(
       padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12, top: 48),
       child: Column(
@@ -49,7 +48,7 @@ showModalBottomSheet(context: context, isScrollControlled: true,builder: (BuildC
                     context,
                     MaterialPageRoute(builder: (context) => const SignInPage())
                   );*/
-                  showSignInBottomSheet();
+                  showSignInPage();
                 }, 
                 child: Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),
@@ -61,7 +60,7 @@ showModalBottomSheet(context: context, isScrollControlled: true,builder: (BuildC
             children: [
               Text("Don't have an account?", style: GoogleFonts.roboto(),),
               SizedBox(width: 6,),
-              GestureDetector(onTap: (){showSignInBottomSheet();} ,child: Text("Sign up", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, textStyle: TextStyle(decoration: TextDecoration.underline)),)),
+              GestureDetector(onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUpPage()));} ,child: Text("Sign up", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, textStyle: TextStyle(decoration: TextDecoration.underline)),)),
             ],
           )
         ],
@@ -71,20 +70,10 @@ showModalBottomSheet(context: context, isScrollControlled: true,builder: (BuildC
     return isSignedIn ? Column(
       children: [
         ElevatedButton(onPressed: () async {
-        print("button pressed");
-         await widget.user?.updateDisplayName("Akram Znini");
-         FirebaseFirestore db = FirebaseFirestore.instance;
-         Timestamp startDate = new Timestamp.fromDate(DateTime(2024, 08, 03));
-         Timestamp endDate = new Timestamp.fromDate(DateTime(2024, 08, 06));
-         
-        var query = db.collection("listings").where('startDate', isLessThanOrEqualTo: startDate).where('endDate', isGreaterThanOrEqualTo: endDate).get().then((querySnapshot) {
-           print("query results:");
-           print(querySnapshot.docs.length);
-           for (var docSnapshot in querySnapshot.docs) {
-      print('${docSnapshot.id} => ${docSnapshot.data()}');
-    }
+        await FirebaseAuth.instance.signOut();
+        setState(() {
+          isSignedIn = false;
         });
-
         }, child: Text("set info")),
         Text("UID: ${widget.user?.uid}"),
         Text("displayName: ${widget.user?.displayName}"),

@@ -124,7 +124,45 @@ class _WishlistTabState extends State<WishlistTab> {
         ],);
       }
       else if (snapshot.hasError){
-        return Text(snapshot.error.toString());
+        var content = ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(width: 1, color: greySelected)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset("assets/icons/heart-icon.svg", width: 40, height: 40,),
+                      ),
+                      Text("Find the cars that you love!", style: robotoLargerBlack,),
+                      Text("Sign in to start adding your favorite cars to your wishlist!", style: lightRoboto, textAlign: TextAlign.center,),
+                      SizedBox(height: 20,),
+                      ElevatedButton(onPressed: (){widget.goToTab(4);}, child: Container(height: 20, width: 120, child: Center(child: Text("SIGN IN", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),))), style: ElevatedButton.styleFrom(backgroundColor: onPrimary),),
+                      SizedBox(height: 20,),
+                    ],),
+                  ),
+                ),
+              ),
+            ],
+          );
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+          TabTitle(title: "Wishlist"),
+
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: content,
+            )),
+
+        ],);
       }
       else {
         return CenteredCircularProgressIndicator();

@@ -207,7 +207,7 @@ class CarInfoContainerWithPrice extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     TextStyle lightRoboto = GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w300, color: Color.fromARGB(255, 84, 84, 84));
     return Padding(
-      padding: const EdgeInsets.only(top:4, bottom:4, left: 8, right: 8),
+      padding: const EdgeInsets.only(top:8, bottom:8, left: 8, right: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -15,6 +15,8 @@ class Listing {
   Timestamp startDate;
   String pictureUrl;
   String city;
+  String fuel;
+  String transmission;
   // Constructor
   Listing({
     required this.docId,
@@ -30,7 +32,9 @@ class Listing {
     required this.rating,
     required this.startDate,
     required this.pictureUrl,
-    required this.city
+    required this.city,
+    required this.fuel,
+    required this.transmission
   });
 
   // Factory constructor to create a Car object from a Firestore DocumentSnapshot
@@ -51,7 +55,30 @@ class Listing {
       rating: (data['rating'] is num ? data['rating'].toDouble() : 0.0),
       startDate: data['start_date'] ?? Timestamp.now(),
       pictureUrl: data['picture_url'],
-      city: data['city']
+      city: data['city'],
+      fuel: data['fuel'],
+      transmission: data['transmission']
+    );
+  }
+  factory Listing.fromMap(Map<String, dynamic> data) {
+  
+    return Listing(
+      docId: data['docId'] ?? '',
+      brand: data['brand'] ?? '',
+      model: data['model'] ?? '',
+      carId: data['car'],
+      dailyRate: data['daily_rate'] ?? 0,
+      endDate: data['end_date'] ?? Timestamp.now(),
+      nbReviews: data['nb_reviews'] ?? 0,
+      nbSeats: data['nb_seats'] ?? 0,
+      positionLatitude: data['position_latitude'] ?? 0.0,
+      positionLongitude: data['position_longitude'] ?? 0.0,
+      rating: (data['rating'] is num ? data['rating'].toDouble() : 0.0),
+      startDate: data['start_date'] ?? Timestamp.now(),
+      pictureUrl: data['picture_url'],
+      city: data['city'],
+      fuel: data['fuel'],
+      transmission: data['transmission']
     );
   }
   Map<String, dynamic> toMap() {
@@ -68,6 +95,27 @@ class Listing {
       'rating': rating,
       'start_date': startDate,
       'picture_url': pictureUrl,
-      'city': city
+      'city': city,
+      'fuel': fuel,
+      'transmission': transmission
+    };}
+  Map<String, dynamic> toMapWithDocId() {
+    return {
+      'docId': docId,
+      'brand': brand,
+      'model': model,
+      'car': carId,
+      'daily_rate': dailyRate,
+      'end_date': endDate,
+      'nb_reviews': nbReviews,
+      'nb_seats': nbSeats,
+      'position_latitude': positionLatitude,
+      'position_longitude': positionLongitude,
+      'rating': rating,
+      'start_date': startDate,
+      'picture_url': pictureUrl,
+      'city': city,
+      'fuel': fuel,
+      'transmission': transmission
     };}
 }

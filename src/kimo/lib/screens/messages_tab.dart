@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/classes/chat_room.dart';
 
@@ -14,9 +15,10 @@ import 'package:kimo/widgets/widgets.dart';
 class MessagesTab extends StatefulWidget {
   const MessagesTab({
     super.key,
-    required this.user
+    required this.user,
+    required this.goToTab
   });
-  
+  final void Function(int) goToTab;
   final User ?user;
 
   @override
@@ -29,7 +31,7 @@ class _MessagesTabState extends State<MessagesTab> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _conversationsStream = FirebaseFirestore.instance.collection("chat_rooms").where("guest_uid", isEqualTo: widget.user!.uid).snapshots();
+    
   }
 
   Future<List<Widget>> generateChatRoomWidgets(List<QueryDocumentSnapshot> docs) async {
@@ -75,6 +77,8 @@ class _MessagesTabState extends State<MessagesTab> {
   }
   @override
   Widget build(BuildContext context) {
+    if (widget.user != null) {
+    _conversationsStream = FirebaseFirestore.instance.collection("chat_rooms").where("guest_uid", isEqualTo: widget.user!.uid).snapshots();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -116,6 +120,50 @@ class _MessagesTabState extends State<MessagesTab> {
         }),
       ],
     );
+    } else {
+      var content = ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(width: 1, color: greySelected)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset("assets/icons/message-icon.svg", width: 40, height: 40,),
+                      ),
+                      Text("Messages", style: robotoLargerBlack,),
+                      Text("Sign in to see messages!", style: lightRoboto, textAlign: TextAlign.center,),
+                      SizedBox(height: 20,),
+                      ElevatedButton(onPressed: (){widget.goToTab(4);}, child: Container(height: 20, width: 120, child: Center(child: Text("SIGN IN", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),))), style: ElevatedButton.styleFrom(backgroundColor: onPrimary),),
+                      SizedBox(height: 20,),
+                    ],),
+                  ),
+                ),
+              ),
+            ],
+          );
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+          TabTitle(title: "Wishlist"),
+
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: content,
+            )),
+
+        ],);
+
+    }
+
+    
   }
 }
 

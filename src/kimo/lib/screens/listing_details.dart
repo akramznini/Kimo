@@ -70,7 +70,12 @@ class _ListingDetailsState extends State<ListingDetails> {
     } else {
       // handle user not null
       var userDoc = await db.collection("users").where("UID", isEqualTo: currentUser!.uid).get();
-      var wishlist = userDoc.docs.first.data()["wishlist"] as List;
+      var wishlist;
+      try {wishlist = userDoc.docs.first.data()["wishlist"] as List;}
+      catch (e) {
+        wishlist = [];
+      }
+      
       widget.isFavorite = wishlist.contains(widget.carDocPath);
     }
     });
@@ -288,9 +293,25 @@ class _ListingDetailsState extends State<ListingDetails> {
                   left: 10,
                   child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){print("buttonPressed");Navigator.pop(context);},)),
                   Positioned(top: 16, right: 16, child: FavoriteToggleButton(isFavorite: widget.isFavorite, size: 20, toggleFavoriteCallback: () async {
-                    print("buttonPressed");
-                    toggleFavoritesCallback(currentUser, car!.docPath, widget.isFavorite);
-                    widget.isFavorite = !widget.isFavorite;
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      toggleFavoritesCallback(currentUser, car!.docPath, widget.isFavorite);
+                      widget.isFavorite = !widget.isFavorite;
+                    } else {
+                      showDialog(context: context, barrierDismissible: true, builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('Sign In', style: robotoLargerBlack,),
+                                        content: Text("You need to sign in to proceed."),
+                                        actions: [
+                                          TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Cancel", style: robotoLargePrimary,),),
+                                          TextButton(onPressed: (){
+                                            widget.goToTab(4);
+                                            Navigator.popUntil(context, (route) => route.isFirst);
+                                          }, child: Text("Sign In", style: robotoLargePrimary)),
+                                        ],
+                                      );
+                                    });
+                    }
+                    
                   },)),
                   Positioned(
                     bottom: 0,
@@ -319,6 +340,7 @@ class _ListingDetailsState extends State<ListingDetails> {
                         
                             ],),
                             ElevatedButton(onPressed: (){
+                              if (FirebaseAuth.instance.currentUser != null) {
                                   showDialog(context: context, barrierDismissible: true, builder: (context) {
                                       return AlertDialog(
                                         title: Text('Trip Confirmation', style: robotoLargerBlack,),
@@ -357,6 +379,24 @@ class _ListingDetailsState extends State<ListingDetails> {
                                         ],
                                       );
                                     });
+                              }
+
+                              else {
+                                showDialog(context: context, barrierDismissible: true, builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('Sign In', style: robotoLargerBlack,),
+                                        content: Text("You need to sign in to proceed."),
+                                        actions: [
+                                          TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Cancel", style: robotoLargePrimary,),),
+                                          TextButton(onPressed: (){
+                                            widget.goToTab(4);
+                                            Navigator.popUntil(context, (route) => route.isFirst);
+                                          }, child: Text("Sign In", style: robotoLargePrimary)),
+                                        ],
+                                      );
+                                    });
+                              }
+                                  
                             }, child: Padding(
                                             padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
                                             child: Text("Reserve", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),),

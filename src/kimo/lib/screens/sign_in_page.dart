@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:kimo/main.dart';
+import 'package:kimo/widgets/buttons.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({
@@ -14,13 +15,17 @@ class SignInPage extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return SignInScreen(
-            providers: [
-              EmailAuthProvider(), // new
+          return Stack(
+            children: [
+              SignInScreen(
+                providers: [
+                  EmailAuthProvider(), // new
+                ],
+              ),
+              Positioned(child: CustomButtonWhite(iconSize: 20, icon:Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},), top: 15, left: 15,)
             ],
           );
         }
-
         return const MyHomePage();
       },
     );

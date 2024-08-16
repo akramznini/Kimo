@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kimo/classes/address.dart';
@@ -8,6 +9,8 @@ import 'package:kimo/classes/trip.dart';
 import 'package:kimo/utils/helper_functions.dart';
 import 'package:kimo/utils/theme_values.dart';
 import 'package:kimo/widgets/buttons.dart';
+
+import '../classes/city.dart';
 
 void showCustomToast(BuildContext context, String message) {
   OverlayEntry overlayEntry = OverlayEntry(
@@ -99,15 +102,17 @@ class CenteredCircularProgressIndicator extends StatelessWidget {
 class TabTitle extends StatelessWidget {
   const TabTitle({
     super.key,
-    required this.title
+    required this.title,
+    this.size = 16
   });
+  final double size;
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
               padding: const EdgeInsets.only(top: 16, bottom: 8),
-              child: Text(title, style: GoogleFonts.roboto(color: Colors.black, fontSize:  16, fontWeight: FontWeight.bold)),
+              child: Text(title, style: GoogleFonts.roboto(color: Colors.black, fontSize:  size, fontWeight: FontWeight.bold)),
             );
   }
 }
@@ -310,3 +315,238 @@ class ReviewPreviewContainer extends StatelessWidget {
     );
   }
 }
+
+class CitySelector extends StatefulWidget {
+  const CitySelector ({
+    super.key,
+    required this.controller,
+    required this.cities,
+    required this.style,
+    required this.textAlign,
+    required this.decoration,
+    required this.tileStyle
+  });
+  final TextStyle style;
+  final TextStyle tileStyle;
+  final TextAlign textAlign;
+  final InputDecoration decoration;
+  final TextEditingController controller;
+  final List<City> cities;
+  @override
+  _CitySelectorState createState() => _CitySelectorState();
+}
+
+class _CitySelectorState extends State<CitySelector> {
+  
+  String selectedCity = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 230,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              List<String> cityNames = widget.cities.map((element) => "${element.name}").toList();
+              widget.controller.text = textEditingValue.text;
+              if (textEditingValue.text.isEmpty) {
+                return cityNames;
+              }
+              return cityNames.where((String city) {
+                return city.toLowerCase().contains(textEditingValue.text.toLowerCase());
+              });
+            },
+            onSelected: (String selection) {
+              setState(() {
+                selectedCity = selection;
+                widget.controller.text = selection;
+              });
+            },
+            optionsViewBuilder: (context, onSelected, options) {
+              return Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4.0,
+                  child: Container(
+                    width: 230,
+                    color: Colors.white,
+                    child: ClipRRect(
+
+                      borderRadius: BorderRadius.circular(30),
+                      child: ListView.builder(
+                        
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final String option = options.elementAt(index);
+                            
+                          return GestureDetector(
+                            onTap: () {
+                              onSelected(option);
+                            },
+                            child: ListTile(
+                              title: Center(
+                                child: Text(
+                                  option,
+                                  style: widget.tileStyle,
+                                ),
+                              ),
+                              tileColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+            fieldViewBuilder: (BuildContext context, TextEditingController textEditingController,
+                FocusNode focusNode, VoidCallback onFieldSubmitted) {
+              return TextFormField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                style: widget.style,
+                textAlign: widget.textAlign,
+                decoration: widget.decoration,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class FilterSelector extends StatefulWidget {
+  const FilterSelector ({
+    super.key,
+    this.enabled = true,
+    required this.controller,
+    required this.elements,
+    this.label,
+    this.suffix,
+    this.keyboardType,
+    this.inputFormatters,
+    this.onSelected,
+    required this.tileTextAlign,
+  });
+  final bool enabled;
+  final TextInputType ?keyboardType;
+  final List<TextInputFormatter> ?inputFormatters;
+  final String ?suffix;
+  final Widget ?label;
+  final TextAlign tileTextAlign;
+  final TextEditingController controller;
+  final List<String> elements;
+  final VoidCallback ?onSelected;
+  
+  @override
+  _FilterSelectorState createState() => _FilterSelectorState();
+}
+
+class _FilterSelectorState extends State<FilterSelector> {
+  
+  String selectedCity = '';
+  int state = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 230,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              widget.controller.text = textEditingValue.text;
+              if (textEditingValue.text.isEmpty) {
+                return widget.elements;
+              }
+              return widget.elements.where((String element) {
+                return element.toLowerCase().contains(textEditingValue.text.toLowerCase());
+              });
+            },
+            onSelected: (String selection) {
+              print("onSelected");
+              setState(() {
+                selectedCity = selection;
+                widget.controller.text = selection;
+                if (widget.onSelected != null) {
+                  widget.onSelected!();
+                }
+              });
+            },
+            optionsViewBuilder: (context, onSelected, options) {
+              return Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4.0,
+                  child: Container(
+                    color: Colors.white,
+                    child: ClipRRect(
+    
+                      borderRadius: BorderRadius.circular(8),
+                      child: SizedBox(
+                        width: 120,
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          itemCount: options.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final String option = options.elementAt(index);
+                              
+                            return GestureDetector(
+                              onTap: () {
+                                onSelected(option);
+                              },
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
+                                    option,
+                                    style: GoogleFonts.roboto(color: Color.fromARGB(255, 0, 0, 0)),
+                                  ),
+                                ),
+                                tileColor: Colors.white,
+                                contentPadding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+            fieldViewBuilder: (BuildContext context, TextEditingController textEditingController,
+                FocusNode focusNode, VoidCallback onFieldSubmitted) {
+              return Container(
+    
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: greySelected),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: TextFormField(
+                    enabled: widget.enabled,
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    style: blackRobotoRegular,
+                    textAlign: widget.tileTextAlign,
+                    keyboardType: widget.keyboardType,
+                    inputFormatters: widget.inputFormatters,
+                    decoration: InputDecoration(label: widget.label, labelStyle: boldRobotoBlack, border: InputBorder.none, suffix: widget.suffix==null ? null : Text(widget.suffix!, style: boldRobotoBlack,)),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+

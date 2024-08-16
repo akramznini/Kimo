@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kimo/classes/city.dart';
 import 'package:kimo/screens/listing_details.dart';
 import 'package:kimo/screens/search_results_page.dart';
 import 'package:kimo/widgets/buttons.dart';
@@ -34,7 +35,7 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  
+  List<City> cities = [];
   bool firstBatchRetrieved = false;
   bool secondBatchRetrieved = false;
   bool dataRetrieved = false;
@@ -61,7 +62,8 @@ class _HomeTabState extends State<HomeTab> {
     List<Future<void>> futures = [];
     if (widget.user != null) {
         var userDoc = await db.collection("users").where("UID", isEqualTo: widget.user!.uid).get();
-        wishlist = userDoc.docs.first.data()["wishlist"] as List;
+        try {wishlist = userDoc.docs.first.data()["wishlist"] as List;}
+        catch (e) {wishlist = [];}
       }
     widget.geolocation.then((position) async {
       
@@ -123,7 +125,11 @@ class _HomeTabState extends State<HomeTab> {
 // First loop for nearbyListings
 
 // Second loop for topPicksListings
-
+  var citiesQuerySnapshot = await db.collection("cities").get();
+  if (citiesQuerySnapshot.docs.isNotEmpty) {
+    cities = (citiesQuerySnapshot.docs.map((doc)=> City.fromFirestore(doc))).toList();
+  }
+  
 // Wait for all futures to complete
 await Future.wait(futures).then((snapshot){setState(() {
   secondBatchRetrieved = true;
@@ -289,28 +295,34 @@ await Future.wait(futures).then((snapshot){setState(() {
                                     },
                                     child: Container(
                                       width: 230, 
-                                      height: 40, 
+                                      height: 56, 
                                       decoration: BoxDecoration(
                                         color: Color.fromARGB(255, 230, 230, 230), 
                                         borderRadius: BorderRadius.circular(30)),
                                         child: Center(child: Text("${dateRange.start.day}/${dateRange.start.month}/${dateRange.start.year} - ${dateRange.end.day}/${dateRange.end.month}/${dateRange.end.year}", style: GoogleFonts.roboto(color: const Color.fromARGB(255, 94, 94, 94)),))))],),
-                              SizedBox(height: 8,), 
-                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text("WHERE", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 10),), SizedBox(height: 8,), Container(width: 230, height: 40, child: TextField( textAlign: TextAlign.center,style: GoogleFonts.roboto(color: const Color.fromARGB(255, 94, 94, 94)) , decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none), fillColor: Color.fromARGB(255, 230, 230, 230), filled: true, hintText: "Add city"),))]),
-                              SizedBox(height: 30),
-                              SizedBox(height: 30),
+                              SizedBox(height: 16,), 
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text("WHERE", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 10),), 
+                              Container(width: 230, height: 56, child: CitySelector(controller: _cityTextcontroller, cities: cities, textAlign: TextAlign.center,style: GoogleFonts.roboto(color: const Color.fromARGB(255, 94, 94, 94)) , tileStyle: GoogleFonts.roboto(color: Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold) , 
+                              decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none), fillColor: Color.fromARGB(255, 230, 230, 230), filled: true, hintText: "Add city")))]),
+                              SizedBox(height: 32),
                               ElevatedButton(onPressed: () async {
-                               /* if (_cityTextcontroller.text.toLowerCase() == "montreal") {
+                                List<String> cityNames = cities.map((element) => element.name).toList();
+                                print(_cityTextcontroller.text);
+                                if (cityNames.contains(_cityTextcontroller.text)) {
                                   Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                                     return SearchResultsPage(goToTab: widget.goToTab, city: _cityTextcontroller.text, dateTimeRange: dateRange);
                                   }));
-                                }*/
-                                print(_cityTextcontroller.text);
+                                }
+
+                                else {
+                                  showCustomToast(context, "Please select a valid city.");
+                                }
                                 
                               }, child: Padding(
                                 padding: const EdgeInsets.only(left: 30, right: 30),
                                 child: Text("FIND CARS", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),),
                               ), style: ElevatedButton.styleFrom(backgroundColor: onPrimary),),
-                              CitySelector(controller: _cityTextcontroller, cities: ['Montreal', 'Casablanca'], textAlign: TextAlign.center,style: GoogleFonts.roboto(color: const Color.fromARGB(255, 94, 94, 94)) , tileStyle: GoogleFonts.roboto(color: Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold) , decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none), fillColor: Color.fromARGB(255, 230, 230, 230), filled: true, hintText: "Add city"))
+                              
                             ],),
                           ),)),
           top: searchBoxPosition,
@@ -354,113 +366,4 @@ await Future.wait(futures).then((snapshot){setState(() {
   
 }
 
-
-class CitySelector extends StatefulWidget {
-  const CitySelector ({
-    super.key,
-    required this.controller,
-    required this.cities,
-    required this.style,
-    required this.textAlign,
-    required this.decoration,
-    required this.tileStyle
-  });
-  final TextStyle style;
-  final TextStyle tileStyle;
-  final TextAlign textAlign;
-  final InputDecoration decoration;
-  final TextEditingController controller;
-  final List<String> cities;
-  @override
-  _CitySelectorState createState() => _CitySelectorState();
-}
-
-class _CitySelectorState extends State<CitySelector> {
-  
-  String selectedCity = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 230,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Autocomplete<String>(
-            optionsBuilder: (TextEditingValue textEditingValue) {
-              if (textEditingValue.text.isEmpty) {
-                return widget.cities;
-              }
-              return widget.cities.where((String city) {
-                return city.toLowerCase().contains(textEditingValue.text.toLowerCase());
-              });
-            },
-            onSelected: (String selection) {
-              setState(() {
-                selectedCity = selection;
-              });
-            },
-            optionsViewBuilder: (context, onSelected, options) {
-              return Align(
-                alignment: Alignment.topLeft,
-                child: Material(
-                  elevation: 4.0,
-                  child: Container(
-                    width: 230,
-                    color: Colors.white,
-                    child: ClipRRect(
-
-                      borderRadius: BorderRadius.circular(30),
-                      child: ListView.builder(
-                        
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final String option = options.elementAt(index);
-                            
-                          return GestureDetector(
-                            onTap: () {
-                              onSelected(option);
-                            },
-                            child: ListTile(
-                              title: Center(
-                                child: Text(
-                                  option,
-                                  style: widget.tileStyle,
-                                ),
-                              ),
-                              tileColor: Colors.white,
-                              contentPadding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-            fieldViewBuilder: (BuildContext context, TextEditingController textEditingController,
-                FocusNode focusNode, VoidCallback onFieldSubmitted) {
-              return TextFormField(
-                controller: textEditingController,
-                focusNode: focusNode,
-                style: widget.style,
-                textAlign: widget.textAlign,
-                decoration: widget.decoration,
-                validator: (value) {
-                  if (!widget.cities.contains(value)) {
-                    return 'Please select a valid city';
-                  }
-                  return null;
-                },
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
 

@@ -4,9 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 const Color greySelected = Color.fromARGB(255, 228, 228, 228);
 const Color onPrimary = Color.fromARGB(255, 0, 118, 203);
 TextStyle lightRoboto = GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w300, color: Color.fromARGB(255, 84, 84, 84), decoration: TextDecoration.none);
+
+TextStyle lightRobotoLarge = GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.w300, color: Color.fromARGB(255, 84, 84, 84), decoration: TextDecoration.none);
 TextStyle robotoSmall2 = GoogleFonts.roboto(fontSize: 10, fontWeight: FontWeight.w400, color: Color.fromARGB(255, 84, 84, 84), decoration: TextDecoration.none);
 TextStyle robotoSmall = GoogleFonts.roboto(fontSize: 8, fontWeight: FontWeight.w600, color: Color.fromARGB(255, 84, 84, 84), decoration: TextDecoration.none);
 TextStyle robotoLargePrimary = GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.w600, color: onPrimary, decoration: TextDecoration.none);
+TextStyle robotoRegularPrimary = GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.w600, color: onPrimary, decoration: TextDecoration.underline, decorationColor: onPrimary);
 TextStyle robotoLargerBlack = GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black, decoration: TextDecoration.none);
 TextStyle boldRobotoSmall = GoogleFonts.roboto(fontSize: 8, fontWeight: FontWeight.w700, color: Color.fromARGB(255, 84, 84, 84), decoration: TextDecoration.none);
 TextStyle boldRobotoSmall2 = GoogleFonts.roboto(fontSize: 10, fontWeight: FontWeight.w700, color: Color.fromARGB(255, 84, 84, 84), decoration: TextDecoration.none);
