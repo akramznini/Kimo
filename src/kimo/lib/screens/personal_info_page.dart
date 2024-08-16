@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kimo/classes/user_data.dart';
 import 'package:kimo/main.dart';
 import 'package:kimo/screens/password_reset_page.dart';
 import 'package:kimo/screens/search_results_page.dart';
@@ -11,23 +12,20 @@ import 'package:kimo/widgets/buttons.dart';
 import 'package:kimo/widgets/widgets.dart';
 
 
-class SignUpPage extends StatefulWidget {
-  SignUpPage({
+class PersonalInfoPage extends StatefulWidget {
+  PersonalInfoPage({
     super.key,
+    required this.userData
   });
-
+  final UserData userData;
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<PersonalInfoPage> createState() => _PersonalInfoPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _PersonalInfoPageState extends State<PersonalInfoPage> {
   final _formKey = GlobalKey<FormState>();
 
   final _emailController = TextEditingController();
-
-  final _passwordController = TextEditingController();
-
-  final _passwordConfirmationController = TextEditingController();
 
   final _firstNameController = TextEditingController();
 
@@ -46,6 +44,17 @@ class _SignUpPageState extends State<SignUpPage> {
 
   return text[0].toUpperCase() + text.substring(1).toLowerCase();
 }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _emailController.text = widget.userData.email;
+    _firstNameController.text = widget.userData.firstName;
+    _lastNameController.text = widget.userData.lastName;
+    _phoneNumberController.text = widget.userData.phoneNumber;
+    _dobController.text = widget.userData.dateOfBirth.toLocal().toString().split(' ')[0];
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -73,7 +82,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TabTitle(title: "Register", size: 24,),
+                          TabTitle(title: "Edit Personal Info", size: 24,),
                           SizedBox(height: 12,),
                           Row(
                             children: [
@@ -150,32 +159,7 @@ class _SignUpPageState extends State<SignUpPage> {
       return null;
         },)),
                           SizedBox(height: 10,),
-                          Container(width: 240, child: CustomTextFormField(label: Text("Password"), obscureText: true, controller: _passwordController, validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
-                                }
-      
-      // Regular expression to check the password requirements
-                                if (value.length < 8) {
-                                  return 'Password must be at least 8 characters';
-                                  }
-      
-                                return null;
-                                },)),
-                          SizedBox(height: 10,),
-                          
-                          Container(width: 240, child: CustomTextFormField(label: Text("Re-enter password"), obscureText: true, controller: _passwordConfirmationController, validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please re-enter your password';
-                                }
-      
-      // Regular expression to check the password requirements
-                                if (value != _passwordController.text) {
-                                  return "Passwords don't match";
-                                  }
-      
-                                return null;
-                                },)),
+                        
                         ],
                       ),
                     ),
@@ -183,30 +167,27 @@ class _SignUpPageState extends State<SignUpPage> {
                   SizedBox(height: 10,),
                   ElevatedButton(onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      try {
-                        UserCredential userCredential = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: _emailController.text,
-                                password: _passwordController.text);
-      
+                      showDialog(context: context, builder: (context){
+                        return AlertDialog(
+                                        title: Text('Confirm Changes', style: robotoLargerBlack,),
+                                        content: Text("Do you want to apply the changes?"),
+                                        actions: [
+                                          TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Cancel", style: robotoLargePrimary,),),
+                                          TextButton(onPressed: () async {
+                                            try {
                         // Store additional user info in Firestore
                         await FirebaseFirestore.instance
                             .collection('users')
-                            .add({
-                          'UID': userCredential.user!.uid,
+                            .doc(widget.userData.docId)
+                            .update({
                           'first_name': capitalizeFirstLetter(_firstNameController.text),
                           'last_name': capitalizeFirstLetter(_lastNameController.text),
                           'phone_number': _phoneNumberController.text,
                           'date_of_birth': DateTime.parse(_dobController.text),
                           'email': _emailController.text,
-                          'nb_reviews': 0,
-                          "nb_trips": 0,
-                          "rating": 0,
-                          "profile_picture_url": "https://firebasestorage.googleapis.com/v0/b/kimo-3f95e.appspot.com/o/profile_pictures%2Fprofile-circle-svgrepo-com.png?alt=media&token=0d61672e-31c2-4416-8ac6-4c6144f5bb85",
-                          "wishlist": []
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Your account was successfully created! Welcome to Kimo!")),
+            SnackBar(content: Text("Info changed successfully!")),
           );
                         // Navigate to home page or show success message
                         Navigator.pushReplacement(
@@ -216,12 +197,18 @@ class _SignUpPageState extends State<SignUpPage> {
                       }
                       catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("There was a problem during registration. Please try again.")),
+            SnackBar(content: Text("There was a problem while applying changes.")),
           );
                       }
+                                            Navigator.popUntil(context, (route) => route.isFirst);
+                                          }, child: Text("Apply", style: robotoLargePrimary)),
+                                        ],
+                                      );
+                      });
+                      
                     }
                     
-                  }, child: Container(height: 20, width: 120, child: Center(child: Text("REGISTER", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),))), style: ElevatedButton.styleFrom(backgroundColor: onPrimary),),
+                  }, child: Container(height: 20, width: 120, child: Center(child: Text("APPLY", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),))), style: ElevatedButton.styleFrom(backgroundColor: onPrimary),),
                   
                 ]
                 

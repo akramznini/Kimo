@@ -37,7 +37,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({
+    super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -108,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
       geolocation = determinePosition();
   }
     
-    tabs = [HomeTab(geolocation: geolocation!, user: currentUser, goToTab: _onChangedTab,), WishlistTab(user: currentUser, goToTab: _onChangedTab,), MessagesTab(goToTab: _onChangedTab, user: currentUser,), TripsTab(user: currentUser, goToTab: _onChangedTab,), AccountTab(user: currentUser,)];
+    tabs = [HomeTab(geolocation: geolocation!, user: currentUser, goToTab: _onChangedTab,), WishlistTab(user: currentUser, goToTab: _onChangedTab,), MessagesTab(goToTab: _onChangedTab, user: currentUser,), TripsTab(user: currentUser, goToTab: _onChangedTab,), AccountTab(user: currentUser, goToTab: _onChangedTab,)];
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(

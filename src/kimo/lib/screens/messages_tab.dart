@@ -31,7 +31,9 @@ class _MessagesTabState extends State<MessagesTab> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    
+    if (FirebaseAuth.instance.currentUser != null) {
+      _conversationsStream = FirebaseFirestore.instance.collection("chat_rooms").where("guest_uid", isEqualTo: widget.user!.uid).snapshots();
+    }
   }
 
   Future<List<Widget>> generateChatRoomWidgets(List<QueryDocumentSnapshot> docs) async {
@@ -78,7 +80,7 @@ class _MessagesTabState extends State<MessagesTab> {
   @override
   Widget build(BuildContext context) {
     if (widget.user != null) {
-    _conversationsStream = FirebaseFirestore.instance.collection("chat_rooms").where("guest_uid", isEqualTo: widget.user!.uid).snapshots();
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
