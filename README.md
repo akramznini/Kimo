@@ -1,35 +1,33 @@
-# Projet IFT3150: Kimo – Application de location de voitures entre particuliers 
+# IFT3150 Project: Kimo – Peer-to-Peer Car Rental Application
 
-> **Page web du projet (IFT3150)**: https://akramznini.github.io/Kimo/
-> **Lien Figma**: https://www.figma.com/design/mZ2XXmH5m2f8tBMWmyUhmr/Untitled?node-id=0-1&t=3XbdQsX0y59m7juZ-1
+> **Project Web Page (IFT3150)**: [Kimo Project Page](https://akramznini.github.io/Kimo/)
+> **Figma Link**: [Figma Design](https://www.figma.com/design/mZ2XXmH5m2f8tBMWmyUhmr/Untitled?node-id=0-1&t=3XbdQsX0y59m7juZ-1)
 
-## Description du projet 
+## Project Description
 
-Le projet Kimo vise à développer une application de location de voitures entre particuliers, permettant aux propriétaires de voitures de les louer à d’autres utilisateurs. Cette application sera disponible sur les plateformes Android et iOS et sera développée en utilisant le framework Flutter. Le projet couvrira l'ensemble de l'architecture, de l'application, du backend au frontend, afin de produire un prototype fonctionnel. 
+The Kimo project aims to develop a peer-to-peer car rental application, allowing car owners to rent their vehicles to other users. This application will be available on both Android and iOS platforms and will be developed using the Flutter framework. The project will cover the entire architecture, from the backend to the frontend, to produce a functional prototype.
 
- 
-## Objectifs 
+## Objectives
 
-1. Développer une interface utilisateur intuitive: L'application offrira une expérience utilisateur fluide et facile à naviguer, adaptée aussi bien pour iOS que pour Android. 
-2. Concevoir une architecture robuste: Le backend de l'application sera conçu pour gérer de manière sécurisée les transactions et les données des utilisateurs. 
-3. Créer un prototype fonctionnel : Le projet aboutira à la création d’un prototype opérationnel de l'application. 
+1. Develop an intuitive user interface: The app will offer a smooth and easy-to-navigate user experience, suitable for both iOS and Android.
+2. Design a robust architecture: The app's backend will be designed to securely manage transactions and user data.
+3. Create a functional prototype: The project will result in the creation of an operational prototype of the application.
 
-### Fonctionnalités
+### Features
 
-- Systèmes de paiement
-- Gestion des réservations
-- Évaluations et commentaires.
+- Payment systems
+- Reservation management
+- Ratings and reviews
 
 ## Plan
 
-Le développement du projet sera divisé en plusieurs phases:
+The project development will be divided into several phases:
 
-- Phase 1 : Recherche et planification – Étude de marché, définition des besoins des utilisateurs et planification détaillée des fonctionnalités. 
-- Phase 2 : Conception de l'interface et de l'expérience utilisateur – Création des wireframes et des prototypes initiaux pour validation. 
-- Phase 3 : Développement – Codage des fonctionnalités en utilisant Flutter pour le frontend et choix d'une solution appropriée pour le backend (par exemple Firebase). 
-- Phase 4 : Tests et déploiement – Tests d'intégration et d'utilisation, correction des bugs, et 
-déploiement de l'application sur les plateformes correspondantes.
+- Phase 1: Research and Planning – Market study, definition of user needs, and detailed planning of features.
+- Phase 2: UI/UX Design – Creation of wireframes and initial prototypes for validation.
+- Phase 3: Development – Coding of features using Flutter for the frontend and selecting an appropriate solution for the backend (e.g., Firebase).
+- Phase 4: Testing and Deployment – Integration and usability testing, bug fixing, and deployment of the application on the respective platforms.
 
-## Liens importants
+## Important Links
 
-- Écheancier : https://sharing.clickup.com/9014347195/g/h/8cmr1dv-414/c800a58015441a2
+- Timeline: [Project Timeline](https://sharing.clickup.com/9014347195/g/h/8cmr1dv-414/c800a58015441a2)
